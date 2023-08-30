@@ -6,6 +6,8 @@
  * Author: Theme2Site
  * Author URI: http://www.theme2site.com/plugins/t2s-store-locator/
  * Version: 1.0.0
+ * Text Domain: t2s-store-locator
+ * Domain Path: languages
  */
 
 // Exit if accessed directly.
@@ -71,11 +73,11 @@ if (!class_exists('T2S_Store_Locator')) {
         {
             // Register custom post type
             $labels = array(
-                'name' => 'T2S Stores',
-                'singular_name' => 'Store',
+                'name' => __('T2S Stores', 't2s-store-locator'),
+                'singular_name' => __('Store', 't2s-store-locator'),
                 'name_admin_bar' => 'Store',
-                'add_new' => __('Add') . ' Store',
-                'add_new_item' => __('Add') . ' Store',
+                'add_new' => __('Add Store', 't2s-store-locator'),
+                'add_new_item' => __('Add Store', 't2s-store-locator'),
             );
             $args = array(
                 'labels' => apply_filters('t2s_stores_labels', $labels),
@@ -146,7 +148,7 @@ if (!class_exists('T2S_Store_Locator')) {
          */
         public function T2S_StoreLocator_settings_link($links)
         {
-            $settings_link = '<a href="options-general.php?page=T2S_StoreLocator_setting">' . __('Settings') . '</a>';
+            $settings_link = '<a href="options-general.php?page=T2SStoreLocator_setting">' . __('Settings') . '</a>';
             array_unshift($links, $settings_link);
             return $links;
         }

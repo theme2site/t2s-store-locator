@@ -15,7 +15,7 @@ add_action('admin_enqueue_scripts', 'T2SStoreLocator_style');
 add_action('add_meta_boxes', 'T2SStoreLocator_add_meta_box');
 function T2SStoreLocator_add_meta_box()
 {
-    add_meta_box('T2SStoreLocator_meta', 'Store Location', 'T2SStoreLocator_meta_box_cb', 't2s_stores', 'normal', 'high');
+    add_meta_box('T2SStoreLocator_meta', __('Store Location', 't2s-store-locator'), 'T2SStoreLocator_meta_box_cb', 't2s_stores', 'normal', 'high');
 }
 
 function T2SStoreLocator_meta_box_cb()
@@ -31,24 +31,24 @@ function T2SStoreLocator_meta_box_cb()
 ?>
     <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
         <div class="alert alert-danger" role="alert">
-            You need to enter a Google Maps API key and define a start point first! <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>">Click here</a> to setup.
+            <?php _e('You need to enter a Google Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
         </div>
     <?php } ?>
     <div class="row mt-3">
         <div class="col-12 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_address">Address</label>
+            <label class="form-label" for="T2SStoreLocator_meta_address"><?php _e('Address', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_address" id="T2SStoreLocator_meta_address" value="<?php echo $address; ?>" />
         </div>
         <div class="col-6 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_latitude">Latitude</label>
+            <label class="form-label" for="T2SStoreLocator_meta_latitude"><?php _e('Latitude', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_latitude" id="T2SStoreLocator_meta_latitude" value="<?php echo $latitude; ?>" />
         </div>
         <div class="col-6 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_longitude">Longitude</label>
+            <label class="form-label" for="T2SStoreLocator_meta_longitude"><?php _e('Longitude', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_longitude" id="T2SStoreLocator_meta_longitude" value="<?php echo $longitude; ?>" />
         </div>
     </div>
-    <input id="pac-input" class="map-search-controls" type="text" placeholder="Search" style="
+    <input id="pac-input" class="map-search-controls" type="text" placeholder="<?php _e('Search', 't2s-store-locator'); ?>" style="
             margin: 10px 0;
             width: calc(100% - 256px);
             height: 40px;
@@ -185,7 +185,7 @@ add_action('admin_menu', 'T2SStoreLocator_add_menu');
 function T2SStoreLocator_add_menu()
 {
     global $my_plugin_hook;
-    $my_plugin_hook = add_options_page('T2S Store locator', 'T2S Store locator', 'manage_options', 'T2SStoreLocator_setting', 'T2SStoreLocator_setting_form');
+    $my_plugin_hook = add_options_page('T2S Store Locator', 'T2S Store Locator', 'manage_options', 'T2SStoreLocator_setting', 'T2SStoreLocator_setting_form');
 }
 
 // register setting to wp options
@@ -206,7 +206,7 @@ function T2SStoreLocator_setting_form()
 {
 ?>
     <div class="wrap">
-        <h1>Setting</h1>
+        <h1><?php _e('Setting', 't2s-store-locator'); ?></h1>
         <form method="post" action="options.php">
             <?php settings_fields('T2SStoreLocator_options'); ?>
             <?php do_settings_sections('T2SStoreLocator_options'); ?>
@@ -214,7 +214,7 @@ function T2SStoreLocator_setting_form()
                 <tbody>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Google Maps API key: </label>
+                            <label for="blogname"><?php _e('Google Maps API key:', 't2s-store-locator'); ?></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2S_StoreLocator_google_map_api" id="T2S_StoreLocator_google_map_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_google_map_api')); ?>" />
@@ -222,7 +222,7 @@ function T2SStoreLocator_setting_form()
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Latitude (Map center): <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="Click<a href='https://www.google.com/maps/' target='_blank'> Me </a>to get the location"></i></label>
+                            <label for="blogname"><?php _e('Latitude (Map center):', 't2s-store-locator'); ?><i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://www.google.com/maps/' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the location', 't2s-store-locator'); ?>"></i></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2SStoreLocator_center_latitude" id="T2SStoreLocator_center_latitude" value="<?php echo esc_attr(get_option('T2SStoreLocator_center_latitude')); ?>" />
@@ -230,7 +230,7 @@ function T2SStoreLocator_setting_form()
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Longitude (Map center): <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="Click<a href='https://www.google.com/maps/' target='_blank'> Me </a>to get the location"></i></label>
+                            <label for="blogname"><?php _e('Longitude (Map center):', 't2s-store-locator'); ?><i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://www.google.com/maps/' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the location', 't2s-store-locator'); ?>"></i></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2SStoreLocator_center_longitude" id="T2SStoreLocator_center_longitude" value="<?php echo esc_attr(get_option('T2SStoreLocator_center_longitude')); ?>" />
