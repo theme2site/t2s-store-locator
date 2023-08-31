@@ -16,9 +16,32 @@ msgstr ""
 msgid "T2S Store Locator"
 msgstr "T2S商店定位器"
 
-#. Description of the plugin
+msgid "Usage:"
+msgstr "使用："
+
+msgid "Map type:"
+msgstr "地图类型："
+
 msgid "Google Maps API key:"
-msgstr "谷歌地图密钥："
+msgstr "谷歌地图Key："
+
+msgid "Baidu Maps API key:"
+msgstr "百度地图Key："
+
+msgid "Amap API key:"
+msgstr "高德地图Key："
+
+msgid "Amap API Secret:"
+msgstr "高德地图密钥："
+
+msgid "Google Map"
+msgstr "谷歌地图"
+
+msgid "Baidu Map"
+msgstr "百度地图"
+
+msgid "Amap"
+msgstr "高德地图"
 
 msgid "Latitude (Map center):"
 msgstr "纬度（地图中心点）"
@@ -35,8 +58,8 @@ msgstr "点击"
 msgid "Me"
 msgstr "我"
 
-msgid "to get the location"
-msgstr "去获取定位"
+msgid "to get the map center"
+msgstr "去获取地图中心点"
 
 msgid "T2S Store Locator plugin for WordPress allows users to easily display a map of their store locations on their website."
 msgstr "WordPress的T2S商店定位器插件是用户可以轻松显示他们商店位置的地图插件。"
@@ -65,6 +88,12 @@ msgstr "商店定位"
 msgid "You need to enter a Google Maps API key and define a start point first!"
 msgstr "您需要先设置谷歌地图密钥并且初始化一个中心点！"
 
+msgid "You need to enter a Baidu Maps API key and define a start point first!"
+msgstr "您需要先设置百度地图密钥并且初始化一个中心点！"
+
+msgid "You need to enter a AMap API key and secret, and define a start point first!"
+msgstr "您需要先设置高德地图Key和密钥，并且初始化一个中心点！"
+
 msgid "Click here"
 msgstr "点我"
 
@@ -76,3 +105,6 @@ msgstr "搜索"
 
 msgid "Add Store"
 msgstr "添加商店"
+
+msgid "To use the shortcode, please add the following code to the page you want to display the map:"
+msgstr "要使用短代码，请将以下代码添加到要显示地图的页面："
