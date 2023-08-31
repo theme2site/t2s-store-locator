@@ -1,12 +1,17 @@
-<div id="r-result">请输入:<input type="text" id="test" size="20" style="width:150px;" /></div>
-<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+<input
+    id="hintPut"
+    class="search-form-input"
+    type="text"
+    placeholder="<?php _e('Search', 't2s-store-locator'); ?>"
+/>
+<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:100%;height:auto; display:none;"></div>
 <div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
 <script src="https://api.map.baidu.com/api?v=2.0&type=webgl&ak=<?php echo $baidu_api; ?>&callback=initAutocomplete&libraries=places&v=weekly"></script>
 <script>
     function displayCoordinates(marker, address) {
         document.getElementById("T2SStoreLocator_meta_latitude").value = marker.latLng.lat.toFixed(6);
         document.getElementById("T2SStoreLocator_meta_longitude").value = marker.latLng.lng.toFixed(6);
-        document.getElementById("T2SStoreLocator_meta_address").value = address ? address : '';
+        // document.getElementById("T2SStoreLocator_meta_address").value = address ? address : '';
     }
 
     function initAutocomplete() {
@@ -39,7 +44,7 @@
             displayCoordinates(marker);
         });
 
-        var ac = new BMapGL.Autocomplete({"input" : "test"});
+        var ac = new BMapGL.Autocomplete({"input" : "hintPut"});
 
         ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
         var str = "";
@@ -59,7 +64,7 @@
         });
 
         var myValue;
-        ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+        ac.addEventListener("onconfirm", function(e) {
             var _value = e.item.value;
             myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
             document.getElementById("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;

@@ -2,3 +2,12 @@
   color: white;
   opacity: 0.8;
 }
+.search-form-input{
+  width: 100% !important;
+  height: 40px !important;
+  border: 0 !important;
+  background: none padding-box rgb(255, 255, 255) !important;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px !important;
+  border-radius: 2px 2px 0 0 !important;
+}
+.amap-sug-result { z-index: 1050; }

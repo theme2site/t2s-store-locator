@@ -31,6 +31,7 @@ function T2SStoreLocator_meta_box_cb()
     $google_api = get_option('T2S_StoreLocator_google_map_api');
     $baidu_api = get_option('T2S_StoreLocator_baidu_map_api');
     $amap_api = get_option('T2S_StoreLocator_amap_api');
+    $amap_api_secret = get_option('T2S_StoreLocator_amap_api_secret');
 ?>
     <div class="row mt-3">
         <div class="col-12 form-group">
@@ -61,9 +62,9 @@ function T2SStoreLocator_meta_box_cb()
         <?php } ?>
     <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/baidu.php'); } ?>
     <?php if($map_type && $map_type=='amap'){?>
-        <?php if (!$center_latitude || !$center_longitude || !$amap_api) { ?>
+        <?php if (!$center_latitude || !$center_longitude || !$amap_api || !$amap_api_secret) { ?>
             <div class="alert alert-danger" role="alert">
-                <?php _e('You need to enter a AMap API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+                <?php _e('You need to enter a AMap API key and secret, and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
             </div>
         <?php } ?>
     <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/amap.php');} ?>
@@ -102,6 +103,7 @@ function T2SStoreLocator_add_options()
     register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_google_map_api');
     register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_baidu_map_api');
     register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_amap_api');
+    register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_amap_api_secret');
     register_setting('T2SStoreLocator_options', 'T2SStoreLocator_center_latitude');
     register_setting('T2SStoreLocator_options', 'T2SStoreLocator_center_longitude');
 }
@@ -143,7 +145,7 @@ function T2SStoreLocator_setting_form()
                             </select>
                         </td>
                     </tr>
-                    <tr id="google-api-key" style="display: <?php echo (!get_option('T2SStoreLocator_map_type') || get_option('T2SStoreLocator_map_type') == 'google') ? 'contents' : 'none'; ?>">
+                    <tr id="google-api-key" style="display: <?php echo (!get_option('T2SStoreLocator_map_type') || get_option('T2SStoreLocator_map_type') == 'google') ? 'table-row' : 'none'; ?>">
                         <th scope="row">
                             <label for="T2S_StoreLocator_google_map_api"><?php _e('Google Maps API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://www.google.com/maps/' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
                         </th>
@@ -151,7 +153,7 @@ function T2SStoreLocator_setting_form()
                             <input class="regular-text" type="text" name="T2S_StoreLocator_google_map_api" id="T2S_StoreLocator_google_map_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_google_map_api')); ?>" />
                         </td>
                     </tr>
-                    <tr id="baidu-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'baidu') ? 'contents' : 'none'; ?>">
+                    <tr id="baidu-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'baidu') ? 'table-row' : 'none'; ?>">
                         <th scope="row">
                             <label for="T2S_StoreLocator_baidu_map_api"><?php _e('Baidu Maps API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://api.map.baidu.com/lbsapi/getpoint/index.html' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
                         </th>
@@ -159,12 +161,20 @@ function T2SStoreLocator_setting_form()
                             <input class="regular-text" type="text" name="T2S_StoreLocator_baidu_map_api" id="T2S_StoreLocator_baidu_map_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_baidu_map_api')); ?>" />
                         </td>
                     </tr>
-                    <tr id="amap-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'amap') ? 'contents' : 'none'; ?>">
+                    <tr id="amap-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'amap') ? 'table-row' : 'none'; ?>">
                         <th scope="row">
                             <label for="T2S_StoreLocator_amap_api"><?php _e('Amap API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://lbs.amap.com/tools/picker' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2S_StoreLocator_amap_api" id="T2S_StoreLocator_amap_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_amap_api')); ?>" />
+                        </td>
+                    </tr>
+                    <tr id="amap-api-secret" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'amap') ? 'table-row' : 'none'; ?>">
+                        <th scope="row">
+                            <label for="T2S_StoreLocator_amap_api_secret"><?php _e('Amap API Secret:', 't2s-store-locator'); ?></label>
+                        </th>
+                        <td>
+                            <input class="regular-text" type="text" name="T2S_StoreLocator_amap_api_secret" id="T2S_StoreLocator_amap_api_secret" value="<?php echo esc_attr(get_option('T2S_StoreLocator_amap_api_secret')); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -196,14 +206,17 @@ function T2SStoreLocator_setting_form()
                         $('#google-api-key').show();
                         $('#baidu-api-key').hide();
                         $('#amap-api-key').hide();
+                        $('#amap-api-secret').hide();
                     } else if (map_type == 'baidu') {
                         $('#google-api-key').hide();
                         $('#baidu-api-key').show();
                         $('#amap-api-key').hide();
+                        $('#amap-api-secret').hide();
                     } else if (map_type == 'amap') {
                         $('#google-api-key').hide();
                         $('#baidu-api-key').hide();
                         $('#amap-api-key').show();
+                        $('#amap-api-secret').show();
                     }
                 });
             })
