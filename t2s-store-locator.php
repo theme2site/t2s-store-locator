@@ -159,7 +159,15 @@ if (!class_exists('T2S_Store_Locator')) {
         function T2S_StoreLocator_shortcode()
         {
             ob_start();
-            include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/default.php');
+            //判断哪个地图
+            $map_type = get_option('T2SStoreLocator_map_type');
+            if($map_type == 'google'){
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/google.php');
+            }elseif ($map_type == 'baidu') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/baidu.php');
+            }elseif ($map_type == 'amap') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/amap.php');
+            }
             $output = ob_get_clean();
 
             return $output;

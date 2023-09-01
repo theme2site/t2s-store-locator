@@ -130,7 +130,7 @@ function T2SStoreLocator_setting_form()
                         </th>
                         <td>
                             <p><?php _e('To use the shortcode, please add the following code to the page you want to display the map:', 't2s-store-locator'); ?></p>
-                            <p><code>[t2s_store_locator]</code></p>
+                            <p><code>[T2S_StoreLocator]</code></p>
                         </td>
                     </tr>
                     <tr>
