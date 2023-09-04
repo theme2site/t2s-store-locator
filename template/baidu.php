@@ -50,42 +50,32 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=<?php echo get_option('T2S_StoreLocator_amap_api'); ?>"></script>
+<script src="http://api.map.baidu.com/api?v=2.0&ak=<?php echo get_option('T2S_StoreLocator_baidu_map_api'); ?>"></script>
 <script type="text/javascript">
-    var map = new AMap.Map("T2SStoreLocatorMap", {
-        resizeEnable: true, //是否监控地图容器尺寸变化
-        zoom: 16, //初始化地图层级
-        // center: [116.397428, 39.90923] //初始化地图中心点
-    });
-
-    var infoWindow = new AMap.InfoWindow({
-        anchor: "top-left",
-        offset: new AMap.Pixel(0, -30)
-    });
-
+    // 百度地图API功能
+    var map = new BMap.Map("T2SStoreLocatorMap");
+    var point = new BMap.Point(<?php echo get_option('T2SStoreLocator_center_longitude');?>, <?php echo get_option('T2SStoreLocator_center_latitude');?>);
+    map.centerAndZoom(point, 15);
+    map.enableScrollWheelZoom();
+    map.enableContinuousZoom();
+    var myIcon = new BMap.Icon("<?php echo T2S_STORE_LOCATOR_PLUGIN_URL.'/assets/imgs/marker.png';?>", new BMap.Size(29,29));
+    myIcon.setImageSize(new BMap.Size(29, 29));
     <?php foreach ($locations as $key => $location) : ?>
-        // 自动适应显示想显示的范围区域
-        var marker<?php echo $key; ?> = new AMap.Marker({
-            map: map,
-            position: [<?php echo $location['lng']; ?> , <?php echo $location['lat']; ?>],
-            offset: new AMap.Pixel(0,-20),
-            clickable : true
-        });
-        map.setFitView();
-        var content<?php echo $key; ?> = `<div class="marker-content">
+        var point = new BMap.Point(<?php echo $location['lng']; ?> , <?php echo $location['lat']; ?>);
+        var marker = new BMap.Marker(point, {icon:myIcon});
+        var html = `<div class="marker-content">
             <h3><a href="<?php echo $location['link']; ?>"><?php echo esc_attr($location['title']); ?></a></h3>
             <p><em><?php echo esc_html( $location['address'] ); ?></em></p>
-        </div>`
-        marker<?php echo $key; ?>.content = content<?php echo $key; ?>;
-        marker<?php echo $key; ?>.on("click", markerClick);
-        marker<?php echo $key; ?>.emit('click', { target: marker<?php echo $key; ?> });// 此处是设置默认出现信息窗体
-        map.add(marker<?php echo $key; ?>);
+        </div>`;
+        //设置infoWindow的大小
+        var infoWindow = new BMap.InfoWindow(html);
+        marker.infoWindow=infoWindow;
+        marker.addEventListener("click", function(e){
+            this.openInfoWindow(e.target.infoWindow);
+        });
+        map.addOverlay(marker);
     <?php endforeach; ?>
 
-    function markerClick (e) {
-      infoWindow.setContent(e.target.content);
-      infoWindow.open(map, e.target.getPosition());
-    };
 
     function buttonSubmit(){
         inputvalue = jQuery("#storesSearchInput").val();
