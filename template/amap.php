@@ -101,7 +101,7 @@
                 datatype: "json",
                 type: "post",
                 data: {
-                    action : 'T2SStoreLocator_get_stores',
+                    action : 'T2S_StoreLocator_get_stores',
                     storesSearchInput: inputvalue
                 },
                 success: function (res) {
@@ -110,9 +110,28 @@
                     var bottom = data['bottom'];
                     jQuery("#storeList").html(top);
                     jQuery("#storeList").change();
-                    jQuery("#storeMap").html(bottom);
-                    jQuery("#storeMap").change();
-                    outerTesetMap();
+                    // 清空地图上的marker
+                    map.clearMap();
+                    var locations = data['locations'];
+                    var markers = [];
+                    for (var i = 0; i < locations.length; i++) {
+                        var marker = new AMap.Marker({
+                            map: map,
+                            position: [locations[i]['lng'], locations[i]['lat']],
+                            offset: new AMap.Pixel(0,-20),
+                            clickable : true
+                        });
+                        var content = `<div class="marker-content">
+                            <h3><a href="${locations[i]['link']}">${locations[i]['title']}</a></h3>
+                            <p><em>${locations[i]['address']}</em></p>
+                        </div>`
+                        marker.content = content;
+                        marker.on("click", markerClick);
+                        marker.emit('click', { target: marker });// 此处是设置默认出现信息窗体
+                        markers.push(marker);
+                    }
+                    // 地图重新定位到新的中心点
+                    map.setFitView();
                 }
             });
         }

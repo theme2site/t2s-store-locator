@@ -192,12 +192,13 @@ if (!class_exists('T2S_Store_Locator')) {
                 $the_query = new WP_Query($query_args);
                 $data1 = '';
                 $data2 = '';
+                $locations = [];
                 if ($the_query->have_posts()) {
                     while ($the_query->have_posts()) : $the_query->the_post();
                         global $post;
-                        $address = get_post_meta($post->ID, 'T2S_StoreLocator_meta_address') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_address')[0] : '';
-                        $lng = get_post_meta($post->ID, 'T2S_StoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_longitude')[0] : '';
-                        $lat = get_post_meta($post->ID, 'T2S_StoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_latitude')[0] : '';
+                        $address = get_post_meta($post->ID, 'T2SStoreLocator_meta_address') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_address')[0] : '';
+                        $lng = get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude')[0] : '';
+                        $lat = get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude')[0] : '';
                         $location  =  [
                             'title'   => get_the_title(),
                             'link'    => get_the_permalink(),
@@ -216,16 +217,18 @@ if (!class_exists('T2S_Store_Locator')) {
                         $data2 .= '<h3><a class="marker-title-link" href="' . get_the_permalink() . '">' . get_the_title() . '</a></h3>';
                         $data2 .= '<p><em>' . esc_html($location['address']) . '</em></p>';
                         $data2 .= '</div>';
+                        $locations[] = $location;
                         //Composite array
                         $result = array('top' => $data1, 'bottom' => $data2);
                     //Output
                     endwhile;
                 } else {
-                    $result = array('top' => '<p>No Result</p>', 'bottom' => '');
+                    $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
                 }
             } else {
-                $result = array('top' => '<p>No Result</p>', 'bottom' => '');
+                $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
             }
+            $result['locations'] = $locations;
             $result = json_encode($result);
             echo $result;
             wp_reset_query();

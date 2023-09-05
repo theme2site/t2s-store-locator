@@ -91,7 +91,7 @@
                 datatype: "json",
                 type: "post",
                 data: {
-                    action : 'T2SStoreLocator_get_stores',
+                    action : 'T2S_StoreLocator_get_stores',
                     storesSearchInput: inputvalue
                 },
                 success: function (res) {
@@ -100,9 +100,29 @@
                     var bottom = data['bottom'];
                     jQuery("#storeList").html(top);
                     jQuery("#storeList").change();
-                    jQuery("#storeMap").html(bottom);
-                    jQuery("#storeMap").change();
-                    outerTesetMap();
+                    // 清空地图上的marker
+                    map.clearOverlays();
+                    var locations = data['locations'];
+                    var markers = [];
+                    // 循环渲染marker
+                    for (var i = 0; i < locations.length; i++) {
+                        var point = new BMap.Point(locations[i]['lng'], locations[i]['lat']);
+                        var marker = new BMap.Marker(point, {icon:myIcon});
+                        var html = `<div class="marker-content">
+                            <h3><a href="${locations[i]['link']}">${locations[i]['title']}</a></h3>
+                            <p><em>${locations[i]['address']}</em></p>
+                        </div>`;
+                        //设置infoWindow的大小
+                        var infoWindow = new BMap.InfoWindow(html);
+                        marker.infoWindow=infoWindow;
+                        marker.addEventListener("click", function(e){
+                            this.openInfoWindow(e.target.infoWindow);
+                        });
+                        map.addOverlay(marker);
+                        markers.push(marker);
+                    }
+                    // 重新设置地图中心点
+                    map.centerAndZoom(point, 15);
                 }
             });
         }

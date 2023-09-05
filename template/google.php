@@ -221,7 +221,7 @@ function submitForm(inputvalue) {
             datatype: "json",
             type: "post",
             data: {
-                action : 'T2SStoreLocator_get_stores',
+                action : 'T2S_StoreLocator_get_stores',
                 storesSearchInput: inputvalue
             },
             success: function (res) {
