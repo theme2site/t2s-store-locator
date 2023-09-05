@@ -15,7 +15,7 @@ add_action('admin_enqueue_scripts', 'T2SStoreLocator_style');
 add_action('add_meta_boxes', 'T2SStoreLocator_add_meta_box');
 function T2SStoreLocator_add_meta_box()
 {
-    add_meta_box('T2SStoreLocator_meta', 'Store Location', 'T2SStoreLocator_meta_box_cb', 't2s_stores', 'normal', 'high');
+    add_meta_box('T2SStoreLocator_meta', __('Store Location', 't2s-store-locator'), 'T2SStoreLocator_meta_box_cb', 't2s_stores', 'normal', 'high');
 }
 
 function T2SStoreLocator_meta_box_cb()
@@ -27,139 +27,47 @@ function T2SStoreLocator_meta_box_cb()
     $longitude = isset($values['T2SStoreLocator_meta_longitude']) ? esc_attr($values['T2SStoreLocator_meta_longitude'][0]) : '';
     $center_latitude = get_option('T2SStoreLocator_center_latitude');
     $center_longitude = get_option('T2SStoreLocator_center_longitude');
+    $map_type = get_option('T2SStoreLocator_map_type');
     $google_api = get_option('T2S_StoreLocator_google_map_api');
+    $baidu_api = get_option('T2S_StoreLocator_baidu_map_api');
+    $amap_api = get_option('T2S_StoreLocator_amap_api');
+    $amap_api_secret = get_option('T2S_StoreLocator_amap_api_secret');
 ?>
-    <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
-        <div class="alert alert-danger" role="alert">
-            You need to enter a Google Maps API key and define a start point first! <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>">Click here</a> to setup.
-        </div>
-    <?php } ?>
     <div class="row mt-3">
         <div class="col-12 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_address">Address</label>
+            <label class="form-label" for="T2SStoreLocator_meta_address"><?php _e('Address', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_address" id="T2SStoreLocator_meta_address" value="<?php echo $address; ?>" />
         </div>
         <div class="col-6 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_latitude">Latitude</label>
+            <label class="form-label" for="T2SStoreLocator_meta_latitude"><?php _e('Latitude', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_latitude" id="T2SStoreLocator_meta_latitude" value="<?php echo $latitude; ?>" />
         </div>
         <div class="col-6 form-group">
-            <label class="form-label" for="T2SStoreLocator_meta_longitude">Longitude</label>
+            <label class="form-label" for="T2SStoreLocator_meta_longitude"><?php _e('Longitude', 't2s-store-locator'); ?></label>
             <input class="form-control" type="text" name="T2SStoreLocator_meta_longitude" id="T2SStoreLocator_meta_longitude" value="<?php echo $longitude; ?>" />
         </div>
     </div>
-    <input id="pac-input" class="map-search-controls" type="text" placeholder="Search" style="
-            margin: 10px 0;
-            width: calc(100% - 256px);
-            height: 40px;
-            border: 0;
-            background: none padding-box rgb(255, 255, 255);
-            box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-            border-radius: 2px;
-        " />
-    <div id="map" style="height: 500px;width: 100%;"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_api; ?>&callback=initAutocomplete&libraries=places&v=weekly" async defer></script>
-    <script>
-        function displayCoordinates(latLng, address) {
-            document.getElementById("T2SStoreLocator_meta_latitude").value = latLng.lat().toFixed(6);
-            document.getElementById("T2SStoreLocator_meta_longitude").value = latLng.lng().toFixed(6);
-            document.getElementById("T2SStoreLocator_meta_address").value = address ? address : '';
-        }
-
-        function initAutocomplete() {
-            const mapCenter = {
-                lat: <?php echo $center_latitude; ?>,
-                lng: <?php echo $center_longitude; ?>
-            };
-            <?php if ($latitude && $longitude) { ?>
-                mapCenter.lat = <?php echo $latitude; ?>;
-                mapCenter.lng = <?php echo $longitude; ?>;
-            <?php } ?>
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: mapCenter,
-                zoom: 13,
-                mapTypeId: "roadmap",
-            });
-            const marker = new google.maps.Marker({
-                position: mapCenter,
-                map: map,
-                draggable: true,
-            });
-            google.maps.event.addListener(map, "click", (event) => {
-                const latLng = event.latLng;
-                marker.setPosition(latLng);
-                displayCoordinates(latLng);
-            });
-            google.maps.event.addListener(marker, "dragend", (event) => {
-                const latLng = event.latLng;
-                displayCoordinates(latLng);
-            });
-
-            // Create the search box and link it to the UI element.
-            const input = document.getElementById("pac-input");
-            const searchBox = new google.maps.places.SearchBox(input);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-            // Bias the SearchBox results towards current map's viewport.
-            map.addListener("bounds_changed", () => {
-                searchBox.setBounds(map.getBounds());
-            });
-            let markers = [];
-
-            // Listen for the event fired when the user selects a prediction and retrieve
-            // more details for that place.
-            searchBox.addListener("places_changed", () => {
-                const places = searchBox.getPlaces();
-                if (places.length == 0) {
-                    return;
-                }
-                console.log(places)
-                // Clear out the old markers.
-                markers.forEach((marker) => {
-                    marker.setMap(null);
-                });
-                markers = [];
-
-                // For each place, get the icon, name and location.
-                const bounds = new google.maps.LatLngBounds();
-
-                marker.setPosition(places[0].geometry.location, places[0].formatted_address);
-                displayCoordinates(places[0].geometry.location, places[0].formatted_address);
-
-                places.forEach((place) => {
-                    if (!place.geometry || !place.geometry.location) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-
-                    const icon = {
-                        url: place.icon,
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25),
-                    };
-
-                    // Create a marker for each place.
-                    markers.push(
-                        new google.maps.Marker({
-                            map,
-                            icon,
-                            title: place.name,
-                            position: place.geometry.location,
-                        })
-                    );
-                    if (place.geometry.viewport) {
-                        // Only geocodes have viewport.
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
-                    }
-                });
-                map.fitBounds(bounds);
-            });
-        }
-        window.initAutocomplete = initAutocomplete;
-    </script>
+    <?php if(!$map_type || $map_type=='google'){?>
+        <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
+            <div class="alert alert-danger" role="alert">
+                <?php _e('You need to enter a Google Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+            </div>
+        <?php } ?>
+    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/google.php');} ?>
+    <?php if($map_type && $map_type=='baidu'){?>
+        <?php if (!$center_latitude || !$center_longitude || !$baidu_api) { ?>
+            <div class="alert alert-danger" role="alert">
+                <?php _e('You need to enter a Baidu Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+            </div>
+        <?php } ?>
+    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/baidu.php'); } ?>
+    <?php if($map_type && $map_type=='amap'){?>
+        <?php if (!$center_latitude || !$center_longitude || !$amap_api || !$amap_api_secret) { ?>
+            <div class="alert alert-danger" role="alert">
+                <?php _e('You need to enter a AMap API key and secret, and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+            </div>
+        <?php } ?>
+    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/amap.php');} ?>
 <?php
 }
 
@@ -185,13 +93,17 @@ add_action('admin_menu', 'T2SStoreLocator_add_menu');
 function T2SStoreLocator_add_menu()
 {
     global $my_plugin_hook;
-    $my_plugin_hook = add_options_page('T2S Store locator', 'T2S Store locator', 'manage_options', 'T2SStoreLocator_setting', 'T2SStoreLocator_setting_form');
+    $my_plugin_hook = add_options_page(__('T2S Store Locator', 't2s-store-locator'), __('T2S Store Locator', 't2s-store-locator'), 'manage_options', 'T2SStoreLocator_setting', 'T2SStoreLocator_setting_form');
 }
 
 // register setting to wp options
 function T2SStoreLocator_add_options()
 {
+    register_setting('T2SStoreLocator_options', 'T2SStoreLocator_map_type');
     register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_google_map_api');
+    register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_baidu_map_api');
+    register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_amap_api');
+    register_setting('T2SStoreLocator_options', 'T2S_StoreLocator_amap_api_secret');
     register_setting('T2SStoreLocator_options', 'T2SStoreLocator_center_latitude');
     register_setting('T2SStoreLocator_options', 'T2SStoreLocator_center_longitude');
 }
@@ -206,7 +118,7 @@ function T2SStoreLocator_setting_form()
 {
 ?>
     <div class="wrap">
-        <h1>Setting</h1>
+        <h1><?php _e('Setting', 't2s-store-locator'); ?></h1>
         <form method="post" action="options.php">
             <?php settings_fields('T2SStoreLocator_options'); ?>
             <?php do_settings_sections('T2SStoreLocator_options'); ?>
@@ -214,15 +126,60 @@ function T2SStoreLocator_setting_form()
                 <tbody>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Google Maps API key: </label>
+                            <?php _e('Usage:', 't2s-store-locator'); ?>
+                        </th>
+                        <td>
+                            <p><?php _e('To use the shortcode, please add the following code to the page you want to display the map:', 't2s-store-locator'); ?></p>
+                            <p><code>[T2S_StoreLocator]</code></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <label for="T2SStoreLocator_map_type"><?php _e('Map type:', 't2s-store-locator'); ?></label>
+                        </th>
+                        <td>
+                            <select name="T2SStoreLocator_map_type" id="T2SStoreLocator_map_type">
+                                <option value="google" <?php echo (!get_option('T2SStoreLocator_map_type') || get_option('T2SStoreLocator_map_type') == 'google') ? 'selected' : ''; ?>><?php _e('Google Map', 't2s-store-locator'); ?></option>
+                                <option value="baidu" <?php echo get_option('T2SStoreLocator_map_type') == 'baidu' ? 'selected' : ''; ?>><?php _e('Baidu Map', 't2s-store-locator'); ?></option>
+                                <option value="amap" <?php echo get_option('T2SStoreLocator_map_type') == 'amap' ? 'selected' : ''; ?>><?php _e('Amap', 't2s-store-locator'); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="google-api-key" style="display: <?php echo (!get_option('T2SStoreLocator_map_type') || get_option('T2SStoreLocator_map_type') == 'google') ? 'table-row' : 'none'; ?>">
+                        <th scope="row">
+                            <label for="T2S_StoreLocator_google_map_api"><?php _e('Google Maps API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://www.google.com/maps/' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2S_StoreLocator_google_map_api" id="T2S_StoreLocator_google_map_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_google_map_api')); ?>" />
                         </td>
                     </tr>
+                    <tr id="baidu-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'baidu') ? 'table-row' : 'none'; ?>">
+                        <th scope="row">
+                            <label for="T2S_StoreLocator_baidu_map_api"><?php _e('Baidu Maps API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://api.map.baidu.com/lbsapi/getpoint/index.html' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
+                        </th>
+                        <td>
+                            <input class="regular-text" type="text" name="T2S_StoreLocator_baidu_map_api" id="T2S_StoreLocator_baidu_map_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_baidu_map_api')); ?>" />
+                        </td>
+                    </tr>
+                    <tr id="amap-api-key" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'amap') ? 'table-row' : 'none'; ?>">
+                        <th scope="row">
+                            <label for="T2S_StoreLocator_amap_api"><?php _e('Amap API key:', 't2s-store-locator'); ?> <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="<?php _e('Click', 't2s-store-locator'); ?><a href='https://lbs.amap.com/tools/picker' target='_blank'> <?php _e('Me', 't2s-store-locator'); ?> </a><?php _e('to get the map center', 't2s-store-locator'); ?>"></i></label>
+                        </th>
+                        <td>
+                            <input class="regular-text" type="text" name="T2S_StoreLocator_amap_api" id="T2S_StoreLocator_amap_api" value="<?php echo esc_attr(get_option('T2S_StoreLocator_amap_api')); ?>" />
+                        </td>
+                    </tr>
+                    <tr id="amap-api-secret" style="display: <?php echo (get_option('T2SStoreLocator_map_type') && get_option('T2SStoreLocator_map_type') == 'amap') ? 'table-row' : 'none'; ?>">
+                        <th scope="row">
+                            <label for="T2S_StoreLocator_amap_api_secret"><?php _e('Amap API Secret:', 't2s-store-locator'); ?></label>
+                        </th>
+                        <td>
+                            <input class="regular-text" type="text" name="T2S_StoreLocator_amap_api_secret" id="T2S_StoreLocator_amap_api_secret" value="<?php echo esc_attr(get_option('T2S_StoreLocator_amap_api_secret')); ?>" />
+                        </td>
+                    </tr>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Latitude (Map center): <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="Click<a href='https://www.google.com/maps/' target='_blank'> Me </a>to get the location"></i></label>
+                            <label for="T2SStoreLocator_center_latitude"><?php _e('Latitude (Map center):', 't2s-store-locator'); ?></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2SStoreLocator_center_latitude" id="T2SStoreLocator_center_latitude" value="<?php echo esc_attr(get_option('T2SStoreLocator_center_latitude')); ?>" />
@@ -230,7 +187,7 @@ function T2SStoreLocator_setting_form()
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="blogname">Longitude (Map center): <i class="fa fa-info-circle" data-html="true" data-toggle="tooltip" data-placement="top" html=true title="Click<a href='https://www.google.com/maps/' target='_blank'> Me </a>to get the location"></i></label>
+                            <label for="T2SStoreLocator_center_longitude"><?php _e('Longitude (Map center):', 't2s-store-locator'); ?></label>
                         </th>
                         <td>
                             <input class="regular-text" type="text" name="T2SStoreLocator_center_longitude" id="T2SStoreLocator_center_longitude" value="<?php echo esc_attr(get_option('T2SStoreLocator_center_longitude')); ?>" />
@@ -240,6 +197,30 @@ function T2SStoreLocator_setting_form()
             </table>
             <?php submit_button(); ?>
         </form>
+        <script>
+            jQuery(function($) {
+                // 选择切换地图
+                $('#T2SStoreLocator_map_type').change(function() {
+                    var map_type = $(this).val();
+                    if (map_type == 'google') {
+                        $('#google-api-key').show();
+                        $('#baidu-api-key').hide();
+                        $('#amap-api-key').hide();
+                        $('#amap-api-secret').hide();
+                    } else if (map_type == 'baidu') {
+                        $('#google-api-key').hide();
+                        $('#baidu-api-key').show();
+                        $('#amap-api-key').hide();
+                        $('#amap-api-secret').hide();
+                    } else if (map_type == 'amap') {
+                        $('#google-api-key').hide();
+                        $('#baidu-api-key').hide();
+                        $('#amap-api-key').show();
+                        $('#amap-api-secret').show();
+                    }
+                });
+            })
+        </script>
     </div>
 <?php
 }

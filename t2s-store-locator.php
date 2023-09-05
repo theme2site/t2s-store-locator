@@ -6,6 +6,8 @@
  * Author: Theme2Site
  * Author URI: http://www.theme2site.com/plugins/t2s-store-locator/
  * Version: 1.0.0
+ * Text Domain: t2s-store-locator
+ * Domain Path: languages
  */
 
 // Exit if accessed directly.
@@ -71,11 +73,11 @@ if (!class_exists('T2S_Store_Locator')) {
         {
             // Register custom post type
             $labels = array(
-                'name' => 'T2S Stores',
-                'singular_name' => 'Store',
+                'name' => __('T2S Stores', 't2s-store-locator'),
+                'singular_name' => __('Store', 't2s-store-locator'),
                 'name_admin_bar' => 'Store',
-                'add_new' => __('Add') . ' Store',
-                'add_new_item' => __('Add') . ' Store',
+                'add_new' => __('Add Store', 't2s-store-locator'),
+                'add_new_item' => __('Add Store', 't2s-store-locator'),
             );
             $args = array(
                 'labels' => apply_filters('t2s_stores_labels', $labels),
@@ -146,7 +148,7 @@ if (!class_exists('T2S_Store_Locator')) {
          */
         public function T2S_StoreLocator_settings_link($links)
         {
-            $settings_link = '<a href="options-general.php?page=T2S_StoreLocator_setting">' . __('Settings') . '</a>';
+            $settings_link = '<a href="options-general.php?page=T2SStoreLocator_setting">' . __('Settings') . '</a>';
             array_unshift($links, $settings_link);
             return $links;
         }
@@ -157,7 +159,15 @@ if (!class_exists('T2S_Store_Locator')) {
         function T2S_StoreLocator_shortcode()
         {
             ob_start();
-            include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/default.php');
+            //判断哪个地图
+            $map_type = get_option('T2SStoreLocator_map_type');
+            if($map_type == 'google'){
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/google.php');
+            }elseif ($map_type == 'baidu') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/baidu.php');
+            }elseif ($map_type == 'amap') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/amap.php');
+            }
             $output = ob_get_clean();
 
             return $output;
@@ -182,12 +192,13 @@ if (!class_exists('T2S_Store_Locator')) {
                 $the_query = new WP_Query($query_args);
                 $data1 = '';
                 $data2 = '';
+                $locations = [];
                 if ($the_query->have_posts()) {
                     while ($the_query->have_posts()) : $the_query->the_post();
                         global $post;
-                        $address = get_post_meta($post->ID, 'T2S_StoreLocator_meta_address') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_address')[0] : '';
-                        $lng = get_post_meta($post->ID, 'T2S_StoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_longitude')[0] : '';
-                        $lat = get_post_meta($post->ID, 'T2S_StoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2S_StoreLocator_meta_latitude')[0] : '';
+                        $address = get_post_meta($post->ID, 'T2SStoreLocator_meta_address') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_address')[0] : '';
+                        $lng = get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude')[0] : '';
+                        $lat = get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude')[0] : '';
                         $location  =  [
                             'title'   => get_the_title(),
                             'link'    => get_the_permalink(),
@@ -206,16 +217,18 @@ if (!class_exists('T2S_Store_Locator')) {
                         $data2 .= '<h3><a class="marker-title-link" href="' . get_the_permalink() . '">' . get_the_title() . '</a></h3>';
                         $data2 .= '<p><em>' . esc_html($location['address']) . '</em></p>';
                         $data2 .= '</div>';
+                        $locations[] = $location;
                         //Composite array
                         $result = array('top' => $data1, 'bottom' => $data2);
                     //Output
                     endwhile;
                 } else {
-                    $result = array('top' => '<p>No Result</p>', 'bottom' => '');
+                    $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
                 }
             } else {
-                $result = array('top' => '<p>No Result</p>', 'bottom' => '');
+                $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
             }
+            $result['locations'] = $locations;
             $result = json_encode($result);
             echo $result;
             wp_reset_query();
