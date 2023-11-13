@@ -12,13 +12,13 @@
         border-radius: 2px;
     "
 />
-<div id="map" style="height: 500px;width: 100%;"></div>
+<div id="map" style="height: 666px;width: 100%;"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_api; ?>&callback=initAutocomplete&libraries=places&v=weekly" async defer></script>
 <script>
     function displayCoordinates(latLng, address) {
         document.getElementById("T2SStoreLocator_meta_latitude").value = latLng.lat().toFixed(6);
         document.getElementById("T2SStoreLocator_meta_longitude").value = latLng.lng().toFixed(6);
-        document.getElementById("T2SStoreLocator_meta_address").value = address ? address : '';
+        // document.getElementById("T2SStoreLocator_meta_address").value = address ? address : '';
     }
 
     function initAutocomplete() {

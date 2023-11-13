@@ -45,7 +45,8 @@ if (!class_exists('T2S_Store_Locator')) {
          */
         public function includes()
         {
-            include_once('includes/t2s-store-locator-admin.php');
+            include_once('includes/admin-install.php');
+            include_once('includes/module-detail-install.php');
         }
 
         /**
@@ -53,9 +54,6 @@ if (!class_exists('T2S_Store_Locator')) {
          */
         public function init()
         {
-            // Register custom post type
-            add_action('init', array($this, 'T2S_StoreLocator_post_type'));
-
             // Add settings link
             add_filter('plugin_action_links_' . T2S_STORE_LOCATOR_PLUGIN_BASENAME, array($this, 'T2S_StoreLocator_settings_link'));
 
@@ -67,64 +65,6 @@ if (!class_exists('T2S_Store_Locator')) {
             // register ajax action
             add_action('wp_ajax_T2S_StoreLocator_get_stores', array($this, 'T2S_StoreLocator_get_stores'));
             add_action('wp_ajax_nopriv_T2S_StoreLocator_get_stores', array($this, 'T2S_StoreLocator_get_stores'));
-        }
-
-        public function T2S_StoreLocator_post_type()
-        {
-            // Register custom post type
-            $labels = array(
-                'name' => __('T2S Stores', 't2s-store-locator'),
-                'singular_name' => __('Store', 't2s-store-locator'),
-                'name_admin_bar' => 'Store',
-                'add_new' => __('Add Store', 't2s-store-locator'),
-                'add_new_item' => __('Add Store', 't2s-store-locator'),
-            );
-            $args = array(
-                'labels' => apply_filters('t2s_stores_labels', $labels),
-                'description' => '',
-                'public' => true,
-                'publicly_queryable' => true,
-                'exclude_from_search' => false,
-                'show_ui' => true,
-                'show_in_menu' => true,
-                'show_in_nav_menus' => true,
-                'query_var' => true,
-                'can_export' => true,
-                'rewrite' => '',
-                'capability_type' => 'post',
-                'has_archive' => true,
-                'hierarchical' => true,
-                'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'page-attributes'),
-                'menu_position' => 20,
-                'menu_icon' => 'dashicons-location',
-            );
-            register_post_type('t2s_stores', apply_filters('t2s_stores_register_args', $args, 't2s_stores'));
-
-            // // Register taxonomy
-            // $labels = array(
-            //     'name' => 'Store Categories',
-            //     'singular_name' => 'Store Category',
-            //     'menu_name' => 'Store Categories',
-            // );
-            // $args = array(
-            //     'label' => 'Store Categories',
-            //     'labels' => apply_filters('t2s_store_categories_labels', $labels),
-            //     'hierarchical' => true,
-            //     'public' => true,
-            //     'show_ui' => true,
-            //     'show_in_nav_menus' => true,
-            //     'show_tagcloud' => true,
-            //     'meta_box_cb' => null,
-            //     'show_admin_column' => true,
-            //     'update_count_callback' => '',
-            //     'query_var' => 't2s_store_categories',
-            //     'rewrite' => true,
-            //     'sort' => '',
-            // );
-            // register_taxonomy('t2s_store_categories', 't2s_stores', apply_filters('t2s_store_categories_register_args', $args, 't2s_store_categories', 't2s_stores'));
-
-            // Clear the permalinks after the post type has been registered.
-            flush_rewrite_rules();
         }
 
         /**
@@ -148,7 +88,7 @@ if (!class_exists('T2S_Store_Locator')) {
          */
         public function T2S_StoreLocator_settings_link($links)
         {
-            $settings_link = '<a href="options-general.php?page=T2SStoreLocator_setting">' . __('Settings') . '</a>';
+            $settings_link = '<a href="admin.php?page=t2s_stores_setting">' . __('Settings') . '</a>';
             array_unshift($links, $settings_link);
             return $links;
         }
@@ -182,46 +122,48 @@ if (!class_exists('T2S_Store_Locator')) {
         {
             if (isset($_POST['action']) && $_POST['action'] == 'T2S_StoreLocator_get_stores') {
                 $storesSearchInput = $_POST['storesSearchInput'];
-                $query_args = array(
-                    'post_type' => 't2s_stores',
-                    'posts_per_page' => -1,
-                    'post_status' => 'publish',
-                    'post_parent' => 0,
-                    's' => $storesSearchInput
+                global $wpdb;
+                $table_name = $wpdb->prefix . 't2s_stores';
+
+                // 构建 SQL 查询语句
+                $query = $wpdb->prepare(
+                    "SELECT * FROM {$table_name} WHERE name LIKE '%%%s%%'",
+                    '%' . $wpdb->esc_like($storesSearchInput) . '%',
                 );
-                $the_query = new WP_Query($query_args);
+                // 执行查询
+                $results = $wpdb->get_results($query);
                 $data1 = '';
                 $data2 = '';
                 $locations = [];
-                if ($the_query->have_posts()) {
-                    while ($the_query->have_posts()) : $the_query->the_post();
-                        global $post;
-                        $address = get_post_meta($post->ID, 'T2SStoreLocator_meta_address') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_address')[0] : '';
-                        $lng = get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude')[0] : '';
-                        $lat = get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude')[0] : '';
-                        $location  =  [
-                            'title'   => get_the_title(),
-                            'link'    => get_the_permalink(),
-                            'address' => $address,
-                            'lng'     => $lng,
-                            'lat'     => $lat
-                        ];
+                if(count($results) > 0){
+                    foreach ($results as $key => $value) {
                         $data1 .= '<div class="t2s-stores-search-item">';
                         $data1 .= '<div class="t2s-stores-search-left">';
-                        $data1 .= '<h4 class="t2s-stores-search-title"><a href="' . get_the_permalink() . '">' . get_the_title() . '</a></h4>';
-                        $data1 .= '<div class="t2s-stores-search-address" data-lat="' . $location['lat'] . '" data-lng="' . $location['lng'] . '">' . $location['address'] . '</div>';
+                        $data1 .= '<h4 class="t2s-stores-search-title"><a href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '">' . $value->name . '</a></h4>';
+                        $data1 .= '<div class="t2s-stores-search-address" data-lat="' . $value->lat . '" data-lng="' . $value->lon . '">' . $value->address . '</div>';
                         $data1 .= '</div>';
-                        $data1 .= '<a class="t2s-stores-search-right" href="' . get_the_permalink() . '" style="background-image: url(' . get_the_post_thumbnail_url() . ');"></a>';
+                        $data1 .= '<a class="t2s-stores-search-right" href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '" style="background-image: url(' . get_the_post_thumbnail_url() . ');"></a>';
                         $data1 .= '</div>';
-                        $data2 .= '<div class="marker" data-lat="' . esc_attr($location['lat']) . '" data-lng="' . esc_attr($location['lng']) . '">';
-                        $data2 .= '<h3><a class="marker-title-link" href="' . get_the_permalink() . '">' . get_the_title() . '</a></h3>';
-                        $data2 .= '<p><em>' . esc_html($location['address']) . '</em></p>';
+                        $data2 .= '<div class="marker" data-lat="' . esc_attr($value->lat) . '" data-lng="' . esc_attr($value->lon) . '">';
+                        $data2 .= '<h3><a class="marker-title-link" href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '">' . $value->name . '</a></h3>';
+                        $data2 .= '<p><em>' . esc_html($value->address) . '</em></p>';
                         $data2 .= '</div>';
-                        $locations[] = $location;
-                        //Composite array
                         $result = array('top' => $data1, 'bottom' => $data2);
-                    //Output
-                    endwhile;
+                        $locations[] = [
+                            'id' => $value->id,
+                            'name' => $value->name,
+                            'address' => $value->address,
+                            'lat' => $value->lat,
+                            'lon' => $value->lon,
+                            'city' => $value->city,
+                            'state' => $value->state,
+                            'country' => $value->country,
+                            'postal_code' => $value->postal_code,
+                            'overview' => $value->overview,
+                            'image_url' => $value->image_url,
+                            'link' => esc_url(site_url('t2s-store/' . $value->id) . '/'),
+                        ];
+                    }
                 } else {
                     $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
                 }

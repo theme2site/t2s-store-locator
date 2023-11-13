@@ -5,7 +5,7 @@
     placeholder="<?php _e('Search', 't2s-store-locator'); ?>"
 />
 <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:100%;height:auto; display:none;"></div>
-<div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
+<div id="T2SStoreLocatorMap" style="height: 666px;width: 100%;"></div>
 <script src="https://api.map.baidu.com/api?v=2.0&type=webgl&ak=<?php echo $baidu_api; ?>&callback=initAutocomplete&libraries=places&v=weekly"></script>
 <script>
     function displayCoordinates(marker, address) {
