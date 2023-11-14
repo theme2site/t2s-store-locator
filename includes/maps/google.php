@@ -1,6 +1,4 @@
-<input id="pac-input"
-    class="map-search-controls search-form-input"
-    type="text"
+<input id="pac-input" class="map-search-controls search-form-input" type="text"
     placeholder="<?php _e('Search', 't2s-store-locator'); ?>"
     style="
         margin: 10px 0 0;
@@ -10,8 +8,7 @@
         background: none padding-box rgb(255, 255, 255);
         box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
         border-radius: 2px;
-    "
-/>
+    " />
 <div id="map" style="height: 666px;width: 100%;"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_api; ?>&callback=initAutocomplete&libraries=places&v=weekly" async defer></script>
 <script>

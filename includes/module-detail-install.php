@@ -1,7 +1,6 @@
 <?php
 
 // Register module detail route
-// http://atwp.test/t2s-store/1/
 function t2s_store_detail_route() {
     add_rewrite_rule('^t2s-store/([^/]+)/?', 'index.php?pagename=t2s-store&store_id=$matches[1]', 'top');
 }

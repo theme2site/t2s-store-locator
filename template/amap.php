@@ -72,8 +72,8 @@
     <?php endforeach; ?>
 
     function markerClick (e) {
-      infoWindow.setContent(e.target.content);
-      infoWindow.open(map, e.target.getPosition());
+        infoWindow.setContent(e.target.content);
+        infoWindow.open(map, e.target.getPosition());
     };
 
     function buttonSubmit(){

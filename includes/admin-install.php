@@ -275,7 +275,7 @@ class STORE_List_Table extends WP_List_Table
     public function get_sortable_columns()
     {
         $sortable_columns = array(
-            'id' => array('id', ),
+            'id' => array('id',),
             'name' => array('name', true),
             'address' => array('address', true),
             'city' => array('city', true),
@@ -415,7 +415,7 @@ function tsl_t2s_stores_page_handler()
     if ('delete' === $table->current_action()) {
         $message = '<div class="updated below-h2" id="message"><p>Successfully deleted.</p></div>';
     }
-    ?>
+?>
     <div class="wrap">
 
         <div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -576,130 +576,126 @@ function tsl_t2s_stores_form_meta_box_handler($item)
     $amap_api_secret = get_option('T2S_StoreLocator_amap_api_secret');
 ?>
     <div class="row">
-    <div class="col-6">
-    <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
-        <tbody>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Name', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="name" name="name" type="text" style="width: 95%" value="<?php echo esc_attr($item['name']) ?>"
-                        size="50" class="code" placeholder="<?php _e('Name', 't2s-store-locator') ?>" required>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Upload image', 't2s_module') ?></label>
-                </th>
-                <td>
-                    <input type="button" class="button upload-image-or-file-button upload-image-button" value="<?php _e('Upload image', 't2s_module') ?>" />
-                    <input type="button" class="button remove-image-or-file-button remove-image-button" value="<?php _e('Remove image', 't2s_module') ?>" />
-                    <div class="upload-image-or-file-wrap" style="margin-top:10px">
-                        <img id="image-url" src="<?php echo esc_attr($item['image_url']) ?>" alt="" style="max-width: 210px; height: auto;">
-                        <input type="hidden" name="image_url" value="<?php echo esc_attr($item['image_url']) ?>"/>
+        <div class="col-6">
+            <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
+                <tbody>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Name', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="name" name="name" type="text" style="width: 95%" value="<?php echo esc_attr($item['name']) ?>" size="50" class="code" placeholder="<?php _e('Name', 't2s-store-locator') ?>" required>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Upload image', 't2s_module') ?></label>
+                        </th>
+                        <td>
+                            <input type="button" class="button upload-image-or-file-button upload-image-button" value="<?php _e('Upload image', 't2s_module') ?>" />
+                            <input type="button" class="button remove-image-or-file-button remove-image-button" value="<?php _e('Remove image', 't2s_module') ?>" />
+                            <div class="upload-image-or-file-wrap" style="margin-top:10px">
+                                <img id="image-url" src="<?php echo esc_attr($item['image_url']) ?>" alt="" style="max-width: 210px; height: auto;">
+                                <input type="hidden" name="image_url" value="<?php echo esc_attr($item['image_url']) ?>" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Address', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="address" name="address" type="text" style="width: 95%" value="<?php echo esc_attr($item['address']) ?>" size="50" class="code" placeholder="<?php _e('Address', 't2s-store-locator') ?>" required>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('City', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="city" name="city" type="text" style="width: 95%" value="<?php echo esc_attr($item['city']) ?>" size="50" class="code" placeholder="<?php _e('City', 't2s-store-locator') ?>" required>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('State', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="state" name="state" type="text" style="width: 95%" value="<?php echo esc_attr($item['state']) ?>" size="50" class="code" placeholder="<?php _e('State', 't2s-store-locator') ?>">
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Country', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="country" name="country" type="text" style="width: 95%" value="<?php echo esc_attr($item['country']) ?>" size="50" class="code" placeholder="<?php _e('Country', 't2s-store-locator') ?>">
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Postal Code', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="postal_code" name="postal_code" type="text" style="width: 95%" value="<?php echo esc_attr($item['postal_code']) ?>" size="50" class="code" placeholder="<?php _e('Postal Code', 't2s-store-locator') ?>">
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Longitude', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="T2SStoreLocator_meta_longitude" name="lon" type="text" style="width: 95%" value="<?php echo esc_attr($item['lon']) ?>" size="50" class="code" placeholder="<?php _e('Longitude', 't2s-store-locator') ?>" required>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Latitude', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <input id="T2SStoreLocator_meta_latitude" name="lat" type="text" style="width: 95%" value="<?php echo esc_attr($item['lat']) ?>" size="50" class="code" placeholder="<?php _e('Latitude', 't2s-store-locator') ?>" required>
+                        </td>
+                    </tr>
+                    <tr class="form-field">
+                        <th valign="top" scope="row">
+                            <label><?php _e('Overview', 't2s-store-locator') ?></label>
+                        </th>
+                        <td>
+                            <textarea id="overview" name="overview" style="width: 95%" rows="5" cols="50" class="code" placeholder="<?php _e('Overview', 't2s-store-locator') ?>"><?php echo esc_attr($item['overview']) ?></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <?php if (!$map_type || $map_type == 'google') { ?>
+                <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php _e('You need to enter a Google Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
                     </div>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Address', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="address" name="address" type="text" style="width: 95%" value="<?php echo esc_attr($item['address']) ?>" size="50" class="code" placeholder="<?php _e('Address', 't2s-store-locator') ?>" required>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('City', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="city" name="city" type="text" style="width: 95%" value="<?php echo esc_attr($item['city']) ?>" size="50" class="code" placeholder="<?php _e('City', 't2s-store-locator') ?>" required>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('State', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="state" name="state" type="text" style="width: 95%" value="<?php echo esc_attr($item['state']) ?>"
-                        size="50" class="code" placeholder="<?php _e('State', 't2s-store-locator') ?>">
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Country', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="country" name="country" type="text" style="width: 95%" value="<?php echo esc_attr($item['country']) ?>"
-                        size="50" class="code" placeholder="<?php _e('Country', 't2s-store-locator') ?>">
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Postal Code', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="postal_code" name="postal_code" type="text" style="width: 95%" value="<?php echo esc_attr($item['postal_code']) ?>"
-                        size="50" class="code" placeholder="<?php _e('Postal Code', 't2s-store-locator') ?>">
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Longitude', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="T2SStoreLocator_meta_longitude" name="lon" type="text" style="width: 95%" value="<?php echo esc_attr($item['lon']) ?>"
-                        size="50" class="code" placeholder="<?php _e('Longitude', 't2s-store-locator') ?>" required>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Latitude', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <input id="T2SStoreLocator_meta_latitude" name="lat" type="text" style="width: 95%" value="<?php echo esc_attr($item['lat']) ?>"
-                        size="50" class="code" placeholder="<?php _e('Latitude', 't2s-store-locator') ?>" required>
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th valign="top" scope="row">
-                    <label><?php _e('Overview', 't2s-store-locator') ?></label>
-                </th>
-                <td>
-                    <textarea id="overview" name="overview" style="width: 95%" rows="5" cols="50"
-                        class="code" placeholder="<?php _e('Overview', 't2s-store-locator') ?>"><?php echo esc_attr($item['overview']) ?></textarea>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
-    <div class="col-6">
-    <?php if(!$map_type || $map_type=='google'){?>
-        <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
-            <div class="alert alert-danger" role="alert">
-                <?php _e('You need to enter a Google Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
-            </div>
-        <?php } ?>
-    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/google.php');} ?>
-    <?php if($map_type && $map_type=='baidu'){?>
-        <?php if (!$center_latitude || !$center_longitude || !$baidu_api) { ?>
-            <div class="alert alert-danger" role="alert">
-                <?php _e('You need to enter a Baidu Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
-            </div>
-        <?php } ?>
-    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/baidu.php'); } ?>
-    <?php if($map_type && $map_type=='amap'){?>
-        <?php if (!$center_latitude || !$center_longitude || !$amap_api || !$amap_api_secret) { ?>
-            <div class="alert alert-danger" role="alert">
-                <?php _e('You need to enter a AMap API key and secret, and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
-            </div>
-        <?php } ?>
-    <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR.'/includes/maps/amap.php');} ?>
-    </div>
+                <?php } ?>
+            <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR . '/includes/maps/google.php');
+            } ?>
+            <?php if ($map_type && $map_type == 'baidu') { ?>
+                <?php if (!$center_latitude || !$center_longitude || !$baidu_api) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php _e('You need to enter a Baidu Maps API key and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+                    </div>
+                <?php } ?>
+            <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR . '/includes/maps/baidu.php');
+            } ?>
+            <?php if ($map_type && $map_type == 'amap') { ?>
+                <?php if (!$center_latitude || !$center_longitude || !$amap_api || !$amap_api_secret) { ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php _e('You need to enter a AMap API key and secret, and define a start point first!', 't2s-store-locator'); ?> <a href="<?php echo admin_url('options-general.php?page=T2SStoreLocator_setting'); ?>"><?php _e('Click here', 't2s-store-locator'); ?></a> <?php _e('to setup.', 't2s-store-locator'); ?>
+                    </div>
+                <?php } ?>
+            <?php require_once(T2S_STORE_LOCATOR_PLUGIN_DIR . '/includes/maps/amap.php');
+            } ?>
+        </div>
     </div>
     <script>
-        jQuery(document).ready(function($){
+        jQuery(document).ready(function($) {
             var mediaUploader;
             $('.upload-image-button').click(function(e) {
                 e.preventDefault();
@@ -712,8 +708,10 @@ function tsl_t2s_stores_form_meta_box_handler($item)
                 mediaUploader = wp.media.frames.file_frame = wp.media({
                     title: '<?php _e('Choose Image', 't2s-store-locator') ?>',
                     button: {
-                    text: '<?php _e('Choose Image', 't2s-store-locator') ?>'
-                }, multiple: false });
+                        text: '<?php _e('Choose Image', 't2s-store-locator') ?>'
+                    },
+                    multiple: false
+                });
                 // When a file is selected, grab the URL and set it as the text field's value
                 mediaUploader.on('select', function() {
                     attachment = mediaUploader.state().get('selection').first().toJSON();
@@ -797,9 +795,11 @@ function t2s_csv_pull_export()
     global $wpdb;
     $table_name = $wpdb->prefix . 't2s_stores'; // do not forget about tables prefix
 
-    $results = $wpdb->get_results("SELECT
+    $results = $wpdb->get_results(
+        "SELECT
         name, address, city, state, country, postal_code, lon, lat, overview
-        FROM {$table_name};", ARRAY_A
+        FROM {$table_name};",
+        ARRAY_A
     );
 
     if (empty($results)) {
@@ -848,7 +848,6 @@ function t2s_csv_pull_export()
     // Save the Excel file to php://output
     $writer->save('php://output');
     exit;
-
 }
 add_action('wp_ajax_t2s_stores_export', 't2s_csv_pull_export');
 
@@ -994,8 +993,13 @@ function tsl_t2s_stores_import_page_handler()
                     $address  = $data['Address'];
                     $city     = $data['City'];
                     $state    = $data['State'];
-                    $item_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE name = %s AND address = %s AND city = %s AND state = %s",
-                        $name, $address, $city, $state), ARRAY_A);
+                    $item_data = $wpdb->get_row($wpdb->prepare(
+                        "SELECT * FROM $table_name WHERE name = %s AND address = %s AND city = %s AND state = %s",
+                        $name,
+                        $address,
+                        $city,
+                        $state
+                    ), ARRAY_A);
                     if ($item_data) {
                         $result = $wpdb->update($table_name, array(
                             'address'     => $address,
@@ -1020,7 +1024,7 @@ function tsl_t2s_stores_import_page_handler()
                             'lat'         => $data['Longitude'],
                             'overview'    => $data['Overview'],
                             'created_at'  => date('Y-m-d H:i:s'),
-                            );
+                        );
                         $result = $wpdb->insert($table_name, $filed);
                     }
 
@@ -1031,7 +1035,6 @@ function tsl_t2s_stores_import_page_handler()
                         $notice = __('There was an error while saving item', 't2s-store-locator');
                     }
                 }
-
             }
         }
     } ?>
@@ -1093,7 +1096,7 @@ add_filter('admin_init', 'T2SStoreLocator_add_options');
 
 function tsl_t2s_stores_setting_page_handler()
 {
-    ?>
+?>
     <div class="wrap">
         <h1><?php _e('Setting', 't2s-store-locator'); ?></h1>
         <form method="post" action="options.php">

@@ -56,9 +56,6 @@ var map_;
  *
  * Renders a Google Map onto the selected jQuery element
  *
- * @date    22/10/19
- * @since   5.8.6
- *
  * @param   jQuery $el The jQuery element.
  * @return  object The map instance.
  */
