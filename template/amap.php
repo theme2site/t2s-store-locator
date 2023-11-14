@@ -1,13 +1,19 @@
 <div class="global-content">
     <div class="container">
         <?php
-            $query_args = array(
-                'post_type' => 't2s_stores',
-                'posts_per_page' => -1,
-                'post_status' => 'publish',
-                'post_parent' => 0
+            global $wpdb;
+            $table_name = $wpdb->prefix . 't2s_stores';
+
+            // 构建 SQL 查询语句
+            $query = $wpdb->prepare(
+                "SELECT * FROM {$table_name}"
             );
-            $the_query = new WP_Query($query_args);
+            // 执行查询
+            $results = $wpdb->get_results($query);
+            $store_names = [];
+            foreach ($results as $key => $result) {
+                $store_names[]['value'] = $result->name;
+            }
         ?>
         <div class="row small-row t2s-stores-map-wrap">
             <div class="col-12 col-lg-4">
@@ -16,32 +22,15 @@
                     <button class="t2s-stores-search-btn" type="search" aria-label="" onclick="buttonSubmit()"><i class="fa fa-search" aria-hidden="true"></i></button>
                 </div>
                 <div class="t2s-stores-search-list" id="storeList">
-                <?php $locations = []; $store_names = [];
-                    if ($the_query->have_posts()) : ?>
-                    <?php while ($the_query->have_posts()) : $the_query->the_post(); ?>
-                        <?php
-                            global $post;
-                            $address = get_post_meta($post->ID, 'T2SStoreLocator_meta_address') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_address')[0] : '';
-                            $lng = get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_longitude')[0] : '';
-                            $lat = get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude') ? get_post_meta($post->ID, 'T2SStoreLocator_meta_latitude')[0] : '';
-                            $locations[]  =  [
-                                'title'   => get_the_title(),
-                                'link'    => get_the_permalink(),
-                                'address' => $address,
-                                'lng'     => $lng,
-                                'lat'     => $lat
-                            ];
-                            $store_names[]['value'] = get_the_title();
-                        ?>
-                        <div class="t2s-stores-search-item">
-                            <div class="t2s-stores-search-left">
-                                <h4 class="t2s-stores-search-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-                                <div class="t2s-stores-search-address" data-lat="<?php echo $lat; ?>" data-lng="<?php echo $lng; ?>"><?php echo $address; ?></div>
-                            </div>
-                            <a class="t2s-stores-search-right" href="<?php the_permalink(); ?>" style="background-image: url(<?php echo get_the_post_thumbnail_url(); ?>);"></a>
+                <?php foreach ($results as $key => $value) : ?>
+                    <div class="t2s-stores-search-item">
+                        <div class="t2s-stores-search-left">
+                            <h4 class="t2s-stores-search-title"><a href="<?php echo esc_url(site_url('t2s-store/' . $result->id) . '/'); ?>"><?php echo $value->name; ?></a></h4>
+                            <div class="t2s-stores-search-address" data-lat="<?php echo $value->lat; ?>" data-lng="<?php echo $value->lon; ?>"><?php echo $value->address; ?></div>
                         </div>
-                    <?php endwhile; ?>
-                <?php endif; ?>
+                        <a class="t2s-stores-search-right" href="<?php echo esc_url(site_url('t2s-store/' . $result->id) . '/'); ?>" style="background-image: url(<?php echo $value->image_url; ?>);"></a>
+                    </div>
+                <?php endforeach; ?>
                 </div>
             </div>
             <div class="col-12 col-lg-8">
@@ -63,18 +52,18 @@
         offset: new AMap.Pixel(0, -30)
     });
 
-    <?php foreach ($locations as $key => $location) : ?>
+    <?php foreach ($results as $key => $location) : ?>
         // 自动适应显示想显示的范围区域
         var marker<?php echo $key; ?> = new AMap.Marker({
             map: map,
-            position: [<?php echo $location['lng']; ?> , <?php echo $location['lat']; ?>],
+            position: [<?php echo $location->lon; ?> , <?php echo $location->lat; ?>],
             offset: new AMap.Pixel(0,-20),
             clickable : true
         });
         map.setFitView();
         var content<?php echo $key; ?> = `<div class="marker-content">
-            <h3><a href="<?php echo $location['link']; ?>"><?php echo esc_attr($location['title']); ?></a></h3>
-            <p><em><?php echo esc_html( $location['address'] ); ?></em></p>
+            <h3><a href="<?php echo esc_url(site_url('t2s-store/' . $result->id) . '/'); ?>"><?php echo esc_attr($location->name); ?></a></h3>
+            <p><em><?php echo esc_html( $location->address ); ?></em></p>
         </div>`
         marker<?php echo $key; ?>.content = content<?php echo $key; ?>;
         marker<?php echo $key; ?>.on("click", markerClick);
@@ -83,8 +72,8 @@
     <?php endforeach; ?>
 
     function markerClick (e) {
-      infoWindow.setContent(e.target.content);
-      infoWindow.open(map, e.target.getPosition());
+        infoWindow.setContent(e.target.content);
+        infoWindow.open(map, e.target.getPosition());
     };
 
     function buttonSubmit(){
@@ -117,12 +106,12 @@
                     for (var i = 0; i < locations.length; i++) {
                         var marker = new AMap.Marker({
                             map: map,
-                            position: [locations[i]['lng'], locations[i]['lat']],
+                            position: [locations[i]['lon'], locations[i]['lat']],
                             offset: new AMap.Pixel(0,-20),
                             clickable : true
                         });
                         var content = `<div class="marker-content">
-                            <h3><a href="${locations[i]['link']}">${locations[i]['title']}</a></h3>
+                            <h3><a href="${locations[i]['link']}">${locations[i]['name']}</a></h3>
                             <p><em>${locations[i]['address']}</em></p>
                         </div>`
                         marker.content = content;

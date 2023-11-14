@@ -5,7 +5,7 @@
     placeholder="<?php _e('Search', 't2s-store-locator'); ?>"
 />
 <div id="result1" class="autobox" name="result1"></div>
-<div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
+<div id="T2SStoreLocatorMap" style="height: 666px;width: 100%;"></div>
 <script type="text/javascript">
     window._AMapSecurityConfig = {
         securityJsCode: "<?php echo $amap_api_secret; ?>",
