@@ -19,6 +19,9 @@ msgstr "T2S商店定位器"
 msgid "Usage:"
 msgstr "使用："
 
+msgid "Usage ( Show maps only ) :"
+msgstr "使用（只显示地图）："
+
 msgid "Map type:"
 msgstr "地图类型："
 

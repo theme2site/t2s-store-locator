@@ -60,6 +60,9 @@ if (!class_exists('T2S_Store_Locator')) {
             // Add shortcode
             add_shortcode('T2S_StoreLocator', array($this, 'T2S_StoreLocator_shortcode'));
 
+            // Add shortcode only amap
+            add_shortcode('T2S_StoreLocator_Only_Map', array($this, 'T2S_StoreLocator_Only_Map_shortcode'));
+
             add_action('wp_enqueue_scripts', array($this, 'T2S_StoreLocator_frontend_enqueue'));
 
             // register ajax action
@@ -107,6 +110,23 @@ if (!class_exists('T2S_Store_Locator')) {
                 include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/baidu.php');
             }elseif ($map_type == 'amap') {
                 include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/amap.php');
+            }
+            $output = ob_get_clean();
+
+            return $output;
+        }
+
+        function T2S_StoreLocator_Only_Map_shortcode()
+        {
+            ob_start();
+            //判断哪个地图
+            $map_type = get_option('T2SStoreLocator_map_type');
+            if($map_type == 'google'){
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/google-only-map.php');
+            }elseif ($map_type == 'baidu') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/baidu-only-map.php');
+            }elseif ($map_type == 'amap') {
+                include(T2S_STORE_LOCATOR_PLUGIN_DIR . '/template/amap-only-map.php');
             }
             $output = ob_get_clean();
 

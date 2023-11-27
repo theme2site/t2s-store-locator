@@ -36,6 +36,7 @@ Overall, the Store Locator plugin is a powerful tool for businesses looking to m
 5. Go to menu: Go to menu: Setting –> Permalinks, setup common settings and save.
 6. Go to menu: Store –> Add Store, add your stores and save.
 7. Copy and paste shortcode [T2S_StoreLocator] into any Page or Post and view page for map output.
+8. Copy and paste shortcode [T2S_StoreLocator_Only_Map] into any Page or Post and view page for map output.
 
 That’s it. You’re ready to go!
 

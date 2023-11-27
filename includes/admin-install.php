@@ -1115,6 +1115,15 @@ function tsl_t2s_stores_setting_page_handler()
                     </tr>
                     <tr>
                         <th scope="row">
+                            <?php _e('Usage ( Show maps only ) :', 't2s-store-locator'); ?>
+                        </th>
+                        <td>
+                            <p><?php _e('To use the shortcode, please add the following code to the page you want to display the map:', 't2s-store-locator'); ?></p>
+                            <p><code>[T2S_StoreLocator_Only_Map]</code></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
                             <label for="T2SStoreLocator_map_type"><?php _e('Map type:', 't2s-store-locator'); ?></label>
                         </th>
                         <td>
