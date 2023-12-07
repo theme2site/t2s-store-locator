@@ -78,8 +78,6 @@ if (!class_exists('T2S_Store_Locator')) {
             wp_enqueue_script("jquery");
             wp_register_script('autocomplete', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/js/jquery.autocomplete.min.js', array('jquery'));
             wp_enqueue_script('autocomplete');
-            wp_register_script('googleapis', 'https://maps.googleapis.com/maps/api/js?key=' . get_option('T2S_StoreLocator_google_map_api') . '&callback=Function.prototype', array('jquery'));
-            wp_enqueue_script('googleapis');
 
             wp_enqueue_style('enqueue-bootstrap', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/bootstrap.min.css', array(), false);
             wp_enqueue_style('font-awesome', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/font-awesome.min.css', array(), false);
@@ -153,7 +151,6 @@ if (!class_exists('T2S_Store_Locator')) {
                 // 执行查询
                 $results = $wpdb->get_results($query);
                 $data1 = '';
-                $data2 = '';
                 $locations = [];
                 if(count($results) > 0){
                     foreach ($results as $key => $value) {
@@ -162,19 +159,16 @@ if (!class_exists('T2S_Store_Locator')) {
                         $data1 .= '<h4 class="t2s-stores-search-title"><a href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '">' . $value->name . '</a></h4>';
                         $data1 .= '<div class="t2s-stores-search-address" data-lat="' . $value->lat . '" data-lng="' . $value->lon . '">' . $value->address . '</div>';
                         $data1 .= '</div>';
-                        $data1 .= '<a class="t2s-stores-search-right" href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '" style="background-image: url(' . get_the_post_thumbnail_url() . ');"></a>';
+                        $data1 .= '<a class="t2s-stores-search-right" href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '" style="background-image: url(' .$value->image_url. ');"></a>';
                         $data1 .= '</div>';
-                        $data2 .= '<div class="marker" data-lat="' . esc_attr($value->lat) . '" data-lng="' . esc_attr($value->lon) . '">';
-                        $data2 .= '<h3><a class="marker-title-link" href="' . esc_url(site_url('t2s-store/' . $value->id) . '/') . '">' . $value->name . '</a></h3>';
-                        $data2 .= '<p><em>' . esc_html($value->address) . '</em></p>';
-                        $data2 .= '</div>';
-                        $result = array('top' => $data1, 'bottom' => $data2);
+                        $result = array('top' => $data1);
                         $locations[] = [
                             'id' => $value->id,
                             'name' => $value->name,
                             'address' => $value->address,
                             'lat' => $value->lat,
                             'lon' => $value->lon,
+                            'lng' => $value->lon,
                             'city' => $value->city,
                             'state' => $value->state,
                             'country' => $value->country,
@@ -185,13 +179,14 @@ if (!class_exists('T2S_Store_Locator')) {
                         ];
                     }
                 } else {
-                    $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
+                    $result = array('top' => '<p>No Result</p>', 'locations' => []);
                 }
             } else {
-                $result = array('top' => '<p>No Result</p>', 'bottom' => '', 'locations' => []);
+                $result = array('top' => '<p>No Result</p>', 'locations' => []);
             }
             $result['locations'] = $locations;
-            $result = json_encode($result);
+            // $result = json_encode($result);
+            $result = json_encode($result, JSON_NUMERIC_CHECK|JSON_UNESCAPED_SLASHES);
             echo $result;
             wp_reset_query();
             die();

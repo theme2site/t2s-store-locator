@@ -39,8 +39,9 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=<?php echo get_option('T2S_StoreLocator_amap_api'); ?>"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=<?php echo get_option('T2S_StoreLocator_amap_api'); ?>&plugin=AMap.MarkerClusterer"></script>
 <script type="text/javascript">
+    const initLocations = <?php echo json_encode($results, JSON_NUMERIC_CHECK|JSON_UNESCAPED_SLASHES);?>;
     var map = new AMap.Map("T2SStoreLocatorMap", {
         resizeEnable: true, //是否监控地图容器尺寸变化
         zoom: 16, //初始化地图层级
@@ -52,24 +53,39 @@
         offset: new AMap.Pixel(0, -30)
     });
 
-    <?php foreach ($results as $key => $location) : ?>
-        // 自动适应显示想显示的范围区域
-        var marker<?php echo $key; ?> = new AMap.Marker({
+    // Add some markers to the map.
+    var locations = [];
+    initLocations.map((position) => {
+        if(position.lat && position.lon && typeof(position.lat) === 'number' && typeof(position.lon) === 'number'){
+            locations.push(position);
+        }
+    });
+    var preLink = "<?php echo esc_url(site_url('t2s-store/')); ?>";
+    const markers = locations.map((position, i) => {
+        const marker = new AMap.Marker({
             map: map,
-            position: [<?php echo $location->lon; ?> , <?php echo $location->lat; ?>],
+            position: [position.lon , position.lat],
             offset: new AMap.Pixel(0,-20),
             clickable : true
         });
         map.setFitView();
-        var content<?php echo $key; ?> = `<div class="marker-content">
-            <h3><a href="<?php echo esc_url(site_url('t2s-store/' . $result->id) . '/'); ?>"><?php echo esc_attr($location->name); ?></a></h3>
-            <p><em><?php echo esc_html( $location->address ); ?></em></p>
-        </div>`
-        marker<?php echo $key; ?>.content = content<?php echo $key; ?>;
-        marker<?php echo $key; ?>.on("click", markerClick);
-        marker<?php echo $key; ?>.emit('click', { target: marker<?php echo $key; ?> });// 此处是设置默认出现信息窗体
-        map.add(marker<?php echo $key; ?>);
-    <?php endforeach; ?>
+        var content =
+        `<div class="marker-content"><h3><a href="${preLink+position.id+'/'}" target="_blank">${position.name}</a></h3>
+        <p><em>${position.address}</em></p>`;
+
+        marker.content = content;
+        marker.on("click", markerClick);
+        marker.emit('click', { target: marker });// 此处是设置默认出现信息窗体
+        map.add(marker);
+        return marker;
+    });
+
+    /* 设置聚合
+     * @param map:地图实例
+     * @param markers:标点对象数组
+    */
+    const cluster = new AMap.MarkerClusterer(map);
+    cluster.setMarkers(markers);
 
     function markerClick (e) {
         infoWindow.setContent(e.target.content);
@@ -96,31 +112,32 @@
                 success: function (res) {
                     var data = eval('(' + res + ')');
                     var top = data['top'];
-                    var bottom = data['bottom'];
                     jQuery("#storeList").html(top);
                     jQuery("#storeList").change();
                     // 清空地图上的marker
                     map.clearMap();
-                    var locations = data['locations'];
-                    var markers = [];
-                    for (var i = 0; i < locations.length; i++) {
-                        var marker = new AMap.Marker({
+                    var locations_ = data['locations'];
+                    var markers_ = [];
+                    for (var i = 0; i < locations_.length; i++) {
+                        var marker_ = new AMap.Marker({
                             map: map,
-                            position: [locations[i]['lon'], locations[i]['lat']],
+                            position: [locations_[i]['lon'], locations_[i]['lat']],
                             offset: new AMap.Pixel(0,-20),
                             clickable : true
                         });
-                        var content = `<div class="marker-content">
-                            <h3><a href="${locations[i]['link']}">${locations[i]['name']}</a></h3>
-                            <p><em>${locations[i]['address']}</em></p>
+                        var content_ = `<div class="marker-content">
+                            <h3><a href="${locations_[i]['link']}">${locations_[i]['name']}</a></h3>
+                            <p><em>${locations_[i]['address']}</em></p>
                         </div>`
-                        marker.content = content;
-                        marker.on("click", markerClick);
-                        marker.emit('click', { target: marker });// 此处是设置默认出现信息窗体
-                        markers.push(marker);
+                        marker_.content = content_;
+                        marker_.on("click", markerClick);
+                        marker_.emit('click', { target: marker_ });// 此处是设置默认出现信息窗体
+                        markers_.push(marker_);
                     }
                     // 地图重新定位到新的中心点
                     map.setFitView();
+                    // 重新设置聚合
+                    cluster.setMarkers(markers_);
                 }
             });
         }

@@ -6,10 +6,11 @@
 
             // 构建 SQL 查询语句
             $query = $wpdb->prepare(
-                "SELECT * FROM {$table_name}"
+                "SELECT *, lon as lng FROM {$table_name}"
             );
             // 执行查询
             $results = $wpdb->get_results($query);
+            // print_r($results);
             $store_names = [];
             foreach ($results as $key => $result) {
                 $store_names[]['value'] = $result->name;
@@ -34,22 +35,18 @@
                 </div>
             </div>
             <div class="col-12 col-lg-8">
-                <div class="acf-map" data-zoom="7" id="storeMap">
-                    <?php foreach ($results as $location) : ?>
-                        <div class="marker" data-lat="<?php echo esc_attr($location->lat); ?>" data-lng="<?php echo esc_attr($location->lon); ?>">
-                            <h3><a class="marker-title-link" href="<?php echo esc_url(site_url('t2s-store/' . $result->id) . '/'); ?>"><?php echo esc_attr($location->name); ?></a></h3>
-                            <p><em><?php echo esc_html( $location->address ); ?></em></p>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                <div class="acf-map" data-zoom="7" id="storeMap"></div>
             </div>
         </div>
     </div>
 </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo get_option('T2S_StoreLocator_google_map_api'); ?>&callback=Function.prototype"></script>
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 <script type="text/javascript">
-var outerTesetMap = null;
 var outerClickAddress = null;
+var outermap = null;
 (function( $ ) {
+const initLocations = <?php echo json_encode($results, JSON_NUMERIC_CHECK|JSON_UNESCAPED_SLASHES);?>;
 var map_;
 /**
  * initMap
@@ -60,7 +57,7 @@ var map_;
  * @return  object The map instance.
  */
 function initMap( $el ) {
-
+    $el = $('.acf-map');
     // Find marker elements within map.
     var $markers = $el.find('.marker');
     // Create gerenic map.
@@ -80,13 +77,8 @@ function initMap( $el ) {
     var map = new google.maps.Map( $el[0], mapArgs );
 
     // Add markers.
-    map.markers = [];
-    $markers.each(function(){
-        initMarker( $(this), map );
-    });
+    initMarker(map);
 
-    // Center map based on markers.
-    centerMap( map );
     // Return map instance.
     return map;
 }
@@ -103,40 +95,44 @@ function initMap( $el ) {
  * @param   object The map instance.
  * @return  object The marker instance.
  */
-function initMarker( $marker, map ) {
-
-    // Get position from marker.
-    var lat = $marker.data('lat');
-    var lng = $marker.data('lng');
-    var latLng = {
-        lat: parseFloat( lat ),
-        lng: parseFloat( lng )
-    };
-
-    // Create marker instance.
-    var marker = new google.maps.Marker({
-        position : latLng,
-        map: map
+function initMarker( map ) {
+    const infoWindow = new google.maps.InfoWindow({
+        content: "",
+        disableAutoPan: true,
     });
-
-    // Append to reference for later use.
-    map.markers.push( marker );
-
-    // If marker contains HTML, add it to an infoWindow.
-    if( $marker.html() ){
-
-        // Create info window.
-        var infowindow = new google.maps.InfoWindow({
-            content: $marker.html()
+    // Add some markers to the map.
+    map.markers = [];
+    var locations = [];
+    initLocations.map((position) => {
+        if(position.lat && position.lon && typeof(position.lat) === 'number' && typeof(position.lon) === 'number'){
+            locations.push(position);
+        }
+    });
+    console.log(locations)
+    var preLink = "<?php echo esc_url(site_url('t2s-store/')); ?>";
+    const markers = locations.map((position, i) => {
+        var markerContent =
+        `<h4><a class="marker-title-link" href="${preLink+position.id+'/'}" target="_blank">${position.name}</a></h4>
+        <p><em>${position.address}</em></p>`;
+        const marker = new google.maps.Marker({
+            position
         });
 
-        // Show info window when marker is clicked.
-        google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open( map, marker );
-            // map.setZoom(7);
+        // markers can only be keyboard focusable when they have click listeners
+        // open info window when marker is clicked
+        marker.addListener("click", () => {
+            infoWindow.setContent(markerContent);
+            infoWindow.open(map, marker);
             map.setCenter(marker.getPosition());
         });
-    }
+        map.markers.push( marker );
+        return marker;
+    });
+
+    // Add a marker clusterer to manage the markers.
+    const markerCluster = new markerClusterer.MarkerClusterer({ map, markers });
+    // Center map based on markers.
+    centerMap( map );
 }
 
 /**
@@ -173,14 +169,15 @@ function centerMap( map ) {
 
 // Render maps on page load.
 $(document).ready(function(){
-    innerTesetMap();
+    initResetMap();
 });
 
 // init and reset map
-function innerTesetMap(){
+function initResetMap(){
     $('.acf-map').each(function(){
-        var map = initMap( $(this) );
+        var map = initMap( $(this));
         map_ = map;
+        outermap = map;
     });
 }
 function innerClickAddress(lat, lng){
@@ -188,7 +185,6 @@ function innerClickAddress(lat, lng){
     map_.setCenter(new google.maps.LatLng(lat, lng));
 }
 
-outerTesetMap = innerTesetMap;
 outerClickAddress = innerClickAddress
 })(jQuery);
 
@@ -212,12 +208,10 @@ function submitForm(inputvalue) {
             success: function (res) {
                 var data = eval('(' + res + ')');
                 var top = data['top'];
-                var bottom = data['bottom'];
+                var resLocations = data['locations'];
                 jQuery("#storeList").html(top);
                 jQuery("#storeList").change();
-                jQuery("#storeMap").html(bottom);
-                jQuery("#storeMap").change();
-                outerTesetMap();
+                outerInitMarker(outermap, resLocations);
             }
         });
     }
@@ -237,4 +231,62 @@ jQuery('#storesSearchInput').autocomplete({
         submitForm(suggestion.value);
     }
 });
+function outerInitMarker( map, s) {
+    const infoWindow = new google.maps.InfoWindow({
+        content: "",
+        disableAutoPan: true,
+    });
+    // Add some markers to the map.
+    map.markers = [];
+    var locations = [];
+    s.map((position) => {
+        if(position.lat && position.lon && typeof(position.lat) === 'number' && typeof(position.lon) === 'number'){
+            locations.push(position);
+        }
+    });
+    // console.log(locations)
+    const markers = locations.map((position, i) => {
+        var markerContent =
+        `<h3><a class="marker-title-link" href="${position.link}" target="_blank">${position.name}</a></h3>
+        <p><em>${position.address}</em></p>`;
+        const marker = new google.maps.Marker({
+            position
+        });
+
+        // markers can only be keyboard focusable when they have click listeners
+        // open info window when marker is clicked
+        marker.addListener("click", () => {
+            infoWindow.setContent(markerContent);
+            infoWindow.open(map, marker);
+            map.setCenter(marker.getPosition());
+        });
+        map.markers.push( marker );
+        return marker;
+    });
+
+    // Add a marker clusterer to manage the markers.
+    const markerCluster = new markerClusterer.MarkerClusterer({ map, markers });
+    // Center map based on markers.
+    outerCenterMap( map );
+}
+
+function outerCenterMap( map ) {
+    // Create map boundaries from all map markers.
+    var bounds = new google.maps.LatLngBounds();
+    map.markers.forEach(function( marker ){
+        bounds.extend({
+            lat: marker.position.lat(),
+            lng: marker.position.lng()
+        });
+    });
+
+    // Case: Single marker.
+    if( map.markers.length == 1 ){
+        map.setCenter( bounds.getCenter() );
+
+    // Case: Multiple markers.
+    } else{
+        map.fitBounds( bounds );
+    }
+}
 </script>

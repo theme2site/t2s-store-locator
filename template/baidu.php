@@ -40,6 +40,8 @@
     </div>
 </div>
 <script src="http://api.map.baidu.com/api?v=2.0&ak=<?php echo get_option('T2S_StoreLocator_baidu_map_api'); ?>"></script>
+<!-- <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script> -->
+<!-- <script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script> -->
 <script type="text/javascript">
     // 百度地图API功能
     var map = new BMap.Map("T2SStoreLocatorMap");
@@ -86,7 +88,6 @@
                 success: function (res) {
                     var data = eval('(' + res + ')');
                     var top = data['top'];
-                    var bottom = data['bottom'];
                     jQuery("#storeList").html(top);
                     jQuery("#storeList").change();
                     // 清空地图上的marker
