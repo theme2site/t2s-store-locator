@@ -1,5 +1,5 @@
-<div class="global-content">
-    <div class="container">
+<div class="t2s-global-content">
+    <div class="t2s-container-fluid t2s-px-0">
         <?php
             global $wpdb;
             $table_name = $wpdb->prefix . 't2s_stores';
@@ -16,8 +16,8 @@
                 $store_names[]['value'] = $result->name;
             }
         ?>
-        <div class="row small-row t2s-stores-map-wrap">
-            <div class="col-12 col-lg-4">
+        <div class="t2s-row t2s-stores-map-wrap">
+            <div class="t2s-col-12 t2s-col-lg-4">
                 <div class="t2s-stores-search-form">
                     <input class="t2s-stores-search-input" id="storesSearchInput" type="text" value="" name="storesSearchInput" placeholder="Search for stores" aria-required="true" />
                     <button class="t2s-stores-search-btn" type="search" aria-label="" onclick="buttonSubmit()"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -34,7 +34,7 @@
                 <?php endforeach; ?>
                 </div>
             </div>
-            <div class="col-12 col-lg-8">
+            <div class="t2s-col-12 t2s-col-lg-8">
                 <div class="acf-map" data-zoom="7" id="storeMap"></div>
             </div>
         </div>

@@ -79,7 +79,8 @@ if (!class_exists('T2S_Store_Locator')) {
             wp_register_script('autocomplete', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/js/jquery.autocomplete.min.js', array('jquery'));
             wp_enqueue_script('autocomplete');
 
-            wp_enqueue_style('enqueue-bootstrap', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/bootstrap.min.css', array(), false);
+            // wp_enqueue_style('enqueue-bootstrap', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/bootstrap.min.css', array(), false);
+            wp_enqueue_style('enqueue-global', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/global.css', array(), false);
             wp_enqueue_style('font-awesome', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/font-awesome.min.css', array(), false);
             wp_enqueue_style('t2s-store-locator-base', T2S_STORE_LOCATOR_PLUGIN_URL . '/assets/css/base.css', array(), false);
         }

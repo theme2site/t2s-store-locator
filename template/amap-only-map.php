@@ -1,24 +1,20 @@
-<div class="global-content">
-    <div class="container">
-        <?php
-            global $wpdb;
-            $table_name = $wpdb->prefix . 't2s_stores';
+<?php
+    global $wpdb;
+    $table_name = $wpdb->prefix . 't2s_stores';
 
-            // 构建 SQL 查询语句
-            $query = $wpdb->prepare(
-                "SELECT * FROM {$table_name}"
-            );
-            // 执行查询
-            $results = $wpdb->get_results($query);
-            $store_names = [];
-            foreach ($results as $key => $result) {
-                $store_names[]['value'] = $result->name;
-            }
-        ?>
-        <div class="t2s-stores-map-wrap">
-            <div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
-        </div>
-    </div>
+    // 构建 SQL 查询语句
+    $query = $wpdb->prepare(
+        "SELECT * FROM {$table_name}"
+    );
+    // 执行查询
+    $results = $wpdb->get_results($query);
+    $store_names = [];
+    foreach ($results as $key => $result) {
+        $store_names[]['value'] = $result->name;
+    }
+?>
+<div class="t2s-stores-map-wrap">
+    <div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
 </div>
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=<?php echo get_option('T2S_StoreLocator_amap_api'); ?>&plugin=AMap.MarkerClusterer"></script>
 <script type="text/javascript">

@@ -1,25 +1,21 @@
-<div class="global-content">
-    <div class="container">
-        <?php
-            global $wpdb;
-            $table_name = $wpdb->prefix . 't2s_stores';
+<?php
+    global $wpdb;
+    $table_name = $wpdb->prefix . 't2s_stores';
 
-            // 构建 SQL 查询语句
-            $query = $wpdb->prepare(
-                "SELECT *, lon as lng FROM {$table_name}"
-            );
-            // 执行查询
-            $results = $wpdb->get_results($query);
-            // print_r($results);
-            $store_names = [];
-            foreach ($results as $key => $result) {
-                $store_names[]['value'] = $result->name;
-            }
-        ?>
-        <div class="row small-row t2s-stores-map-wrap">
-            <div class="acf-map" data-zoom="7" id="storeMap"></div>
-        </div>
-    </div>
+    // 构建 SQL 查询语句
+    $query = $wpdb->prepare(
+        "SELECT *, lon as lng FROM {$table_name}"
+    );
+    // 执行查询
+    $results = $wpdb->get_results($query);
+    // print_r($results);
+    $store_names = [];
+    foreach ($results as $key => $result) {
+        $store_names[]['value'] = $result->name;
+    }
+?>
+<div class="row small-row t2s-stores-map-wrap">
+    <div class="acf-map" data-zoom="7" id="storeMap"></div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo get_option('T2S_StoreLocator_google_map_api'); ?>&callback=Function.prototype"></script>
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>

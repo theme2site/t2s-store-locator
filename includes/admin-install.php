@@ -4,7 +4,7 @@ require_once T2S_STORE_LOCATOR_PLUGIN_DIR . 'vendor/autoload.php';
 // Enqueueing scripts and styles
 function T2SStoreLocator_style()
 {
-    wp_enqueue_style('t2s-bootstrap', plugins_url('../assets/css/bootstrap.min.css', __FILE__));
+    wp_enqueue_style('t2s-global', plugins_url('../assets/css/global.css', __FILE__));
     wp_enqueue_style('font-awesome', plugins_url('../assets/css/font-awesome.min.css', __FILE__));
     wp_enqueue_style('admin-base', plugins_url('../assets/css/admin-base.css', __FILE__));
     wp_enqueue_script('t2s-bootstrap-js', plugins_url('../assets/js/bootstrap.bundle.min.js', __FILE__));
@@ -575,8 +575,8 @@ function tsl_t2s_stores_form_meta_box_handler($item)
     $amap_api = get_option('T2S_StoreLocator_amap_api');
     $amap_api_secret = get_option('T2S_StoreLocator_amap_api_secret');
 ?>
-    <div class="row">
-        <div class="col-6">
+    <div class="t2s-row">
+        <div class="t2s-col">
             <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
                 <tbody>
                     <tr class="form-field">
@@ -667,7 +667,7 @@ function tsl_t2s_stores_form_meta_box_handler($item)
                 </tbody>
             </table>
         </div>
-        <div class="col-6">
+        <div class="t2s-col">
             <?php if (!$map_type || $map_type == 'google') { ?>
                 <?php if (!$center_latitude || !$center_longitude || !$google_api) { ?>
                     <div class="alert alert-danger" role="alert">
