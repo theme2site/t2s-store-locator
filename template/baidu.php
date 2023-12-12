@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="t2s-col-12 t2s-col-lg-8">
-                <div id="T2SStoreLocatorMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
+                <div id="T2SStoreLocatorMap" class="t2s-stores-map-container" style="height: <?php echo $height; ?>px;width: 100%;"></div>
             </div>
         </div>
     </div>

@@ -14,7 +14,7 @@
     }
 ?>
 <div class="t2s-stores-map-wrap">
-    <div id="T2SStoreLocatorMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
+    <div id="T2SStoreLocatorMap" class="t2s-stores-map-container" style="height: <?php echo $height; ?>px;width: 100%;"></div>
 </div>
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=<?php echo get_option('T2S_StoreLocator_amap_api'); ?>&plugin=AMap.MarkerClusterer"></script>
 <script type="text/javascript">

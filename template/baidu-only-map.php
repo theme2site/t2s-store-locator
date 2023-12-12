@@ -14,7 +14,7 @@
     }
 ?>
 <div class="row small-row t2s-stores-map-wrap">
-    <div id="T2SStoreLocatorMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
+    <div id="T2SStoreLocatorMap" class="t2s-stores-map-container" style="height: <?php echo $height; ?>px;width: 100%;"></div>
 </div>
 <script src="http://api.map.baidu.com/api?v=2.0&ak=<?php echo get_option('T2S_StoreLocator_baidu_map_api'); ?>"></script>
 <script type="text/javascript">
