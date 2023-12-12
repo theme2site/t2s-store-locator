@@ -98,8 +98,9 @@ if (!class_exists('T2S_Store_Locator')) {
         /**
          * Register Shortcode
          */
-        function T2S_StoreLocator_shortcode()
+        function T2S_StoreLocator_shortcode($params)
         {
+            $height = $params['height'] ?? 500;
             ob_start();
             //判断哪个地图
             $map_type = get_option('T2SStoreLocator_map_type');
@@ -115,8 +116,9 @@ if (!class_exists('T2S_Store_Locator')) {
             return $output;
         }
 
-        function T2S_StoreLocator_Only_Map_shortcode()
+        function T2S_StoreLocator_Only_Map_shortcode($params)
         {
+            $height = $params['height'] ?? 500;
             ob_start();
             //判断哪个地图
             $map_type = get_option('T2SStoreLocator_map_type');

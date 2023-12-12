@@ -1,6 +1,7 @@
 <div class="t2s-global-content">
     <div class="t2s-container-fluid t2s-px-0">
         <?php
+            print_r($height);
             global $wpdb;
             $table_name = $wpdb->prefix . 't2s_stores';
 
@@ -34,7 +35,7 @@
                 </div>
             </div>
             <div class="t2s-col-12 t2s-col-lg-8">
-                <div id="T2SStoreLocatorMap" style="height: 500px;width: 100%;"></div>
+                <div id="T2SStoreLocatorMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
             </div>
         </div>
     </div>

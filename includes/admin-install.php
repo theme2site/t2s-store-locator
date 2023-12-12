@@ -1097,7 +1097,7 @@ add_filter('admin_init', 'T2SStoreLocator_add_options');
 function tsl_t2s_stores_setting_page_handler()
 {
 ?>
-    <div class="wrap">
+    <div class="wrap t2s-wrap">
         <h1><?php _e('Setting', 't2s-store-locator'); ?></h1>
         <form method="post" action="options.php">
             <?php settings_fields('T2SStoreLocator_options'); ?>
@@ -1110,7 +1110,7 @@ function tsl_t2s_stores_setting_page_handler()
                         </th>
                         <td>
                             <p><?php _e('To use the shortcode, please add the following code to the page you want to display the map:', 't2s-store-locator'); ?></p>
-                            <p><code>[T2S_StoreLocator]</code></p>
+                            <p><code>[T2S_StoreLocator]</code> or <code>[T2S_StoreLocator height="500"]</code></p>
                         </td>
                     </tr>
                     <tr>
@@ -1119,7 +1119,7 @@ function tsl_t2s_stores_setting_page_handler()
                         </th>
                         <td>
                             <p><?php _e('To use the shortcode, please add the following code to the page you want to display the map:', 't2s-store-locator'); ?></p>
-                            <p><code>[T2S_StoreLocator_Only_Map]</code></p>
+                            <p><code>[T2S_StoreLocator_Only_Map]</code> or <code>[T2S_StoreLocator_Only_Map height="500"]</code></p>
                         </td>
                     </tr>
                     <tr>

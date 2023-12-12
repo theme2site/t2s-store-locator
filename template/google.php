@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="t2s-col-12 t2s-col-lg-8">
-                <div class="acf-map" data-zoom="7" id="storeMap"></div>
+                <div class="acf-map" data-zoom="7" id="storeMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
             </div>
         </div>
     </div>

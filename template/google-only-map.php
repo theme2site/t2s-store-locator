@@ -15,7 +15,7 @@
     }
 ?>
 <div class="row small-row t2s-stores-map-wrap">
-    <div class="acf-map" data-zoom="7" id="storeMap"></div>
+    <div class="acf-map" data-zoom="7" id="storeMap" style="height: <?php echo $height; ?>px;width: 100%;"></div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo get_option('T2S_StoreLocator_google_map_api'); ?>&callback=Function.prototype"></script>
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
